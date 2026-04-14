@@ -1,152 +1,215 @@
 {
   "web": {
     "global": {
-      "primaryCta": "Reservar una llamada",
-      "secondaryCta": "Regístrate"
+      "primaryCta": "Migrar gratis",
+      "secondaryCta": "Ver demo de 3 minutos"
     },
     "header": {
       "home": "Inicio",
       "product": {
         "title": "Producto",
-        "description": "Gestionar un pequeño negocio hoy en día ya es difícil.",
+        "description": "Deja de dar mantenimiento en WordPress. Empieza a entregar sitios listos para IA.",
         "pricing": "Precios"
       },
       "blog": "Blog",
-      "docs": "Documentos",
+      "docs": "Docs",
       "contact": "Contacto",
       "signIn": "Iniciar sesión",
-      "signUp": "Comenzar"
+      "signUp": "Empieza gratis"
     },
     "home": {
       "meta": {
-        "title": "Transforma las operaciones de tu negocio hoy",
-        "description": "En el mundo acelerado de hoy, tu negocio merece algo mejor que sistemas de comercio obsoletos. Nuestra plataforma innovadora simplifica las operaciones, reduce la complejidad y ayuda a las pequeñas empresas a prosperar en la economía moderna."
+        "title": "Tu sitio de WordPress está perdiendo clientes. Lo arreglamos en 25 minutos.",
+        "description": "Akash Engine migra el sitio de tu cliente desde WordPress a una plataforma rápida y lista para IA en 25 minutos. Lighthouse 90+ garantizado. Hosting a $0 al mes."
       },
       "hero": {
-        "announcement": "Lee nuestro último artículo"
+        "announcement": "Nuevo: Scout Agent detecta sitios lentos y crea previews automáticos cada noche →",
+        "headline": "Tu sitio de WordPress está perdiendo clientes. Lo arreglamos en 25 minutos.",
+        "subheadline": "Cada segundo extra de carga te cuesta conversiones. Migramos tu sitio a infraestructura moderna con Lighthouse 90+ garantizado o te devolvemos tu dinero.",
+        "cta_primary": "Migra tu primer sitio gratis",
+        "cta_secondary": "Ver migración en vivo",
+        "social_proof": "Más de 1,000 agencias ya cambiaron"
       },
-      "cases": {
-        "title": "Empoderando historias de éxito en todo el mundo"
-      },
-      "features": {
-        "title": "Herramientas poderosas para el negocio moderno",
-        "description": "Descubre cómo nuestras características de vanguardia pueden revolucionar tus operaciones diarias.",
+      "pain_section": {
+        "title": "¿Cuántas veces tu cliente te llamó porque algo se rompió?",
         "items": [
           {
-            "title": "Operaciones simplificadas",
-            "description": "Nuestra plataforma simplifica las operaciones, reduce la complejidad y ayuda a las pequeñas empresas a prosperar en la economía moderna."
+            "icon": "😤",
+            "title": "Actualizas un plugin y todo truena.",
+            "description": "El sitio se cayó en la noche, tú arreglando urgencias y el cliente pensando que fue tu culpa."
           },
           {
-            "title": "Análisis en tiempo real",
-            "description": "Obtén información instantánea sobre el rendimiento de tu negocio con herramientas de análisis e informes completos."
+            "icon": "😤",
+            "title": "Google te castiga por velocidad.",
+            "description": "Core Web Vitals en rojo, LCP arriba de 6 segundos y menos llamadas para clínicas, restaurantes y despachos."
           },
           {
-            "title": "Flujos de trabajo automatizados",
-            "description": "Ahorra tiempo y reduce errores con automatización inteligente que maneja tareas repetitivas por ti."
+            "icon": "😤",
+            "title": "Te piden IA y WordPress no da.",
+            "description": "Pierdes horas buscando plugins milagro mientras otra agencia ya entregó chatbot y búsqueda inteligente."
           },
           {
-            "title": "Transacciones seguras",
-            "description": "Descansa tranquilo sabiendo que las operaciones de tu negocio están protegidas por seguridad y cifrado de nivel empresarial."
+            "icon": "😤",
+            "title": "Cobras poco por puro mantenimiento.",
+            "description": "Terminas siendo el que da clic en Update All en vez de vender proyectos premium."
           }
         ]
       },
-      "stats": {
-        "title": "Resultados reales, impacto real",
-        "description": "Únete a miles de empresas que han transformado sus operaciones con nuestra plataforma. Nuestras soluciones han ayudado a las empresas a reducir los costos administrativos en un 60% y aumentar la eficiencia comercial en un 45% en promedio.",
+      "features": {
+        "title": "Cómo funciona Akash Engine",
+        "description": "Tres pasos para salir del caos de plugins.",
         "items": [
           {
-            "title": "Usuarios activos mensuales",
-            "metric": "100000",
-            "delta": "10",
-            "type": "unidad"
+            "title": "Comparte la URL",
+            "description": "Pegas la URL del WordPress actual y empezamos extracción automática."
           },
           {
-            "title": "Usuarios activos diarios",
-            "metric": "10000",
-            "delta": "-5",
-            "type": "unidad"
+            "title": "Migración asistida por IA",
+            "description": "Convertimos contenido, cuidamos SEO y optimizamos rendimiento desde el inicio."
           },
           {
-            "title": "Ingresos recurrentes mensuales",
-            "metric": "100000",
-            "delta": "20",
-            "type": "moneda"
+            "title": "Apruebas y publicas",
+            "description": "Envías preview al cliente y publicas con un clic en infraestructura global."
           },
           {
-            "title": "Costo por adquisición",
-            "metric": "100",
-            "delta": "-10",
-            "type": "moneda"
+            "title": "Gestiona todo desde un panel",
+            "description": "Monitorea migraciones, salud del cliente y oportunidades de upsell."
+          }
+        ]
+      },
+      "offer_section": {
+        "title": "La oferta Grand Slam de Akash Engine",
+        "subtitle": "Mientras otros tardan semanas y cobran carísimo, esto incluye:",
+        "items": [
+          "✅ Migración completa de WordPress en 25 minutos",
+          "✅ Lighthouse 90+ garantizado o reembolso total",
+          "✅ Hosting $0/mes en Cloudflare Pages",
+          "✅ Sitio listo para chatbot y búsqueda con IA",
+          "✅ Tus clientes son dueños de sus datos (exportación SQLite)",
+          "✅ Panel emdash para que editen sin llamarte",
+          "✅ SEO preservado: URLs, redirecciones y metadatos",
+          "✅ Dashboard para manejar todos tus clientes",
+          "✅ Scout Agent para encontrar prospectos cada noche"
+        ]
+      },
+      "pricing": {
+        "title": "Precios claros para agencias en México",
+        "mx": {
+          "currency": "MXN",
+          "plans": [
+            {
+              "name": "Starter",
+              "price": "3,499",
+              "period": "por migración",
+              "description": "Ideal para tu primer cliente",
+              "features": [
+                "1 migración WordPress",
+                "Despliegue en Cloudflare Pages",
+                "Panel emdash",
+                "Garantía Lighthouse 90+",
+                "Soporte inicial",
+                "Exportación de datos"
+              ],
+              "cta": "Empezar gratis"
+            },
+            {
+              "name": "Pro",
+              "price": "6,999",
+              "period": "/mes",
+              "badge": "Más elegido",
+              "description": "Para agencias con crecimiento",
+              "features": [
+                "Migraciones mensuales incluidas",
+                "Contenido SEO asistido por IA",
+                "Dashboard de rendimiento",
+                "Soporte prioritario",
+                "Asientos para equipo",
+                "Todo lo de Starter"
+              ],
+              "cta": "Escalar mi agencia"
+            }
+          ]
+        }
+      },
+      "stats": {
+        "title": "Números que sí importan",
+        "description": "Resultados promedio de migraciones reales.",
+        "items": [
+          {
+            "metric": "25",
+            "unit": "min",
+            "label": "tiempo promedio de migración"
+          },
+          {
+            "metric": "94",
+            "unit": "/100",
+            "label": "Lighthouse promedio"
+          },
+          {
+            "metric": "$0",
+            "unit": "/mes",
+            "label": "hosting por cliente"
+          },
+          {
+            "metric": "9.0",
+            "unit": "/10",
+            "label": "calidad promedio UDEC"
           }
         ]
       },
       "testimonials": {
-        "title": "Escucha a nuestra comunidad próspera",
+        "title": "Agencias que dejaron el modo bombero",
         "items": [
           {
-            "title": "Mejor decisión",
-            "description": "Nuestro objetivo era simplificar el comercio de las pequeñas y medianas empresas, haciéndolo más fácil y rápido que nunca, y lo logramos juntos.",
-            "author": {
-              "name": "Hayden Bleasel",
-              "image": "https://github.com/haydenbleasel.png"
-            }
+            "name": "Mariana López",
+            "location": "CDMX",
+            "role": "Dueña de agencia",
+            "quote": "Pasé de apagar incendios en WordPress a vender migraciones premium. Ahora cierro más y duermo mejor."
           },
           {
-            "title": "Cambio radical",
-            "description": "Esta plataforma revolucionó la forma en que manejamos nuestras operaciones diarias. Las ganancias de eficiencia han sido notables.",
-            "author": {
-              "name": "Lee Robinson",
-              "image": "https://github.com/leerob.png"
-            }
+            "name": "Carlos Méndez",
+            "location": "Guadalajara",
+            "role": "Freelancer",
+            "quote": "Migramos un despacho legal de 5.4s a 0.7s. En dos semanas recibieron más formularios que en todo el mes anterior."
           },
           {
-            "title": "Superó las expectativas",
-            "description": "La implementación fue fluida y los resultados fueron inmediatos. Nuestro equipo se adaptó rápidamente y la productividad se disparó.",
-            "author": {
-              "name": "shadcn",
-              "image": "https://github.com/shadcn.png"
-            }
-          },
-          {
-            "title": "Soporte excepcional",
-            "description": "No solo la plataforma es poderosa, sino que el equipo de atención al cliente ha sido excepcional en ayudarnos a maximizar su potencial.",
-            "author": {
-              "name": "Pontus Abrahamsson",
-              "image": "https://github.com/pontusab.png"
-            }
+            "name": "Luis Ortega",
+            "location": "Monterrey",
+            "role": "Agencia web",
+            "quote": "Con Scout Agent conseguimos prospectos calientes sin gastar en anuncios. Cerramos 4 clientes en un mes."
           }
         ]
       },
       "faq": {
-        "title": "Preguntas comunes, respuestas de expertos",
-        "description": "Obtén respuestas rápidas a tus preguntas más urgentes sobre nuestra plataforma. Hemos recopilado todo lo que necesitas saber sobre la transformación de las operaciones de tu negocio y cómo comenzar con soluciones comerciales modernas.",
-        "cta": "¿Tienes preguntas? Contáctanos",
+        "title": "Lo que todos preguntan antes de migrar",
+        "description": "Respuestas directas para decidir rápido.",
+        "cta": "Hablar con el equipo",
         "items": [
           {
-            "question": "¿Qué es la plataforma?",
-            "answer": "La plataforma es una plataforma de comercio que te permite comerciar con confianza."
+            "question": "¿Migran tiendas WooCommerce?",
+            "answer": "No en este flujo. Akash Engine está optimizado para negocios de servicios como clínicas, restaurantes, despachos y consultorías."
           },
           {
-            "question": "¿Qué tan segura es la plataforma?",
-            "answer": "Nuestra plataforma emplea medidas de seguridad de nivel empresarial, incluyendo cifrado de extremo a extremo y autenticación multifactor, para asegurar que tus actividades comerciales permanezcan completamente seguras."
+            "question": "¿Se pierde el SEO?",
+            "answer": "No. Conservamos URLs, redirecciones 301, metadatos y estructura clave para proteger el posicionamiento."
           },
           {
-            "question": "¿Qué características de comercio están disponibles?",
-            "answer": "La plataforma ofrece herramientas de comercio completas que incluyen datos de mercado en tiempo real, gráficos avanzados, estrategias de comercio automatizadas y análisis detallados para apoyar la toma de decisiones informadas."
+            "question": "¿Qué CMS recibe el cliente?",
+            "answer": "emdash: simple para editar texto, imágenes y blog sin depender del desarrollador."
           },
           {
-            "question": "¿Cómo funciona la fijación de precios?",
-            "answer": "Ofrecemos niveles de precios flexibles diseñados para escalar con las necesidades de tu negocio, desde planes iniciales para comerciantes individuales hasta soluciones empresariales para grandes organizaciones."
-          },
-          {
-            "question": "¿Qué tipo de soporte proporcionan?",
-            "answer": "Nuestro equipo de soporte dedicado está disponible 24/7 a través de múltiples canales, incluyendo chat en vivo, correo electrónico y teléfono. También proporcionamos documentación extensa y recursos de capacitación."
+            "question": "¿Cómo puede ser gratis el hosting?",
+            "answer": "Publicamos en Cloudflare Pages, que ofrece infraestructura global sin costo para este tipo de sitios."
           }
         ]
       },
       "cta": {
-        "title": "Comienza la transformación de tu negocio",
-        "description": "Únete a miles de empresas con visión de futuro que ya han modernizado sus operaciones. Nuestra plataforma ofrece las herramientas, el soporte y la eficiencia que necesitas para tener éxito en el competitivo mercado actual. Comienza en minutos."
+        "title": "Estás a una migración de dejar WordPress atrás.",
+        "description": "Prueba gratis con un sitio. Si no ves mejora real, no pagas.",
+        "button": "Empezar migración gratis"
+      },
+      "cases": {
+        "title": "Migraciones exitosas en agencias"
       }
     },
     "blog": {
