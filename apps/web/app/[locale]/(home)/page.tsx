@@ -2,11 +2,12 @@ import { showBetaFeature } from "@repo/feature-flags";
 import { getDictionary } from "@repo/internationalization";
 import { createMetadata } from "@repo/seo/metadata";
 import type { Metadata } from "next";
-import { Cases } from "./components/cases";
 import { CTA } from "./components/cta";
 import { FAQ } from "./components/faq";
 import { Features } from "./components/features";
 import { Hero } from "./components/hero";
+import { OfferSection } from "./components/offer";
+import { PainSection } from "./components/pain";
 import { Stats } from "./components/stats";
 import { Testimonials } from "./components/testimonials";
 
@@ -16,12 +17,9 @@ type HomeProps = {
   }>;
 };
 
-export const generateMetadata = async ({
-  params,
-}: HomeProps): Promise<Metadata> => {
+export const generateMetadata = async ({ params }: HomeProps): Promise<Metadata> => {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
-
   return createMetadata(dictionary.web.home.meta);
 };
 
@@ -32,14 +30,11 @@ const Home = async ({ params }: HomeProps) => {
 
   return (
     <>
-      {betaFeature && (
-        <div className="w-full bg-black py-2 text-center text-white">
-          Beta feature now available
-        </div>
-      )}
-      <Hero dictionary={dictionary} />
-      <Cases dictionary={dictionary} />
+      {betaFeature && <div className="w-full bg-black py-2 text-center text-white">Beta feature now available</div>}
+      <Hero dictionary={dictionary} locale={locale} />
+      <PainSection dictionary={dictionary} />
       <Features dictionary={dictionary} />
+      <OfferSection dictionary={dictionary} />
       <Stats dictionary={dictionary} />
       <Testimonials dictionary={dictionary} />
       <FAQ dictionary={dictionary} />

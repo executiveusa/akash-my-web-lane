@@ -1,152 +1,232 @@
 {
   "web": {
     "global": {
-      "primaryCta": "Book a call",
-      "secondaryCta": "Sign up"
+      "primaryCta": "Migrate for Free",
+      "secondaryCta": "Watch 3-min demo"
     },
     "header": {
       "home": "Home",
       "product": {
         "title": "Product",
-        "description": "Managing a small business today is already tough.",
+        "description": "Stop maintaining WordPress. Start building AI-ready sites.",
         "pricing": "Pricing"
       },
       "blog": "Blog",
       "docs": "Docs",
       "contact": "Contact",
       "signIn": "Sign in",
-      "signUp": "Get started"
+      "signUp": "Get started free"
     },
     "home": {
       "meta": {
-        "title": "Transform Your Business Operations Today",
-        "description": "In today's fast-paced world, your business deserves better than outdated trading systems. Our innovative platform streamlines operations, reduces complexity, and helps small businesses thrive in the modern economy."
+        "title": "Your WordPress Site Is Costing You Clients. We Fix That in 25 Minutes.",
+        "description": "Akash Engine migrates your client's WordPress site to a blazing-fast, AI-ready platform in 25 minutes. Lighthouse 90+ guaranteed. $0/month hosting forever. Your clients stay. Your revenue grows."
       },
       "hero": {
-        "announcement": "Read our latest article"
+        "announcement": "New: Scout Agent finds slow WordPress sites and builds previews overnight →",
+        "headline": "Your WordPress site loads in 6 seconds. Your competitor's loads in 0.4.",
+        "subheadline": "Every second of load time costs 7% of conversions. We migrate your client's WordPress site to AI-ready infrastructure in 25 minutes. Lighthouse 90+ guaranteed or your money back.",
+        "cta_primary": "Migrate your first site free",
+        "cta_secondary": "See a live migration",
+        "social_proof": "1,000+ agencies already switched"
       },
-      "cases": {
-        "title": "Empowering Success Stories Across the Globe"
-      },
-      "features": {
-        "title": "Powerful Tools for Modern Business",
-        "description": "Discover how our cutting-edge features can revolutionize your daily operations.",
+      "pain_section": {
+        "title": "Be honest. Is this your week?",
         "items": [
           {
-            "title": "Streamlined Operations",
-            "description": "Our platform streamlines operations, reduces complexity, and helps small businesses thrive in the modern economy."
+            "icon": "😤",
+            "title": "Plugin update broke the site. Again.",
+            "description": "Your client's site went down at 11pm. You spent 3 hours rolling back. They blamed you. You billed them nothing because you're afraid they'll leave."
           },
           {
-            "title": "Real-Time Analytics",
-            "description": "Get instant insights into your business performance with comprehensive analytics and reporting tools."
+            "icon": "😤",
+            "title": "Google Search Console is screaming.",
+            "description": "Core Web Vitals: Poor. LCP: 6.2s. CLS: 0.4. Your client's site is invisible on Google because WordPress can't get out of its own way."
           },
           {
-            "title": "Automated Workflows",
-            "description": "Save time and reduce errors with intelligent automation that handles repetitive tasks for you."
+            "icon": "😤",
+            "title": "Client asks: 'Can we add AI?'",
+            "description": "You say 'let me look into it' and spend 4 hours trying to make a WP plugin do something it was never designed to do. Competitor ships it in a week."
           },
           {
-            "title": "Secure Transactions",
-            "description": "Rest easy knowing your business operations are protected by enterprise-grade security and encryption."
+            "icon": "😤",
+            "title": "You're a plugin janitor, not a developer.",
+            "description": "$150/month retainer for clicking 'Update All' and praying. This is not the career you trained for."
           }
         ]
       },
-      "stats": {
-        "title": "Real Results, Real Impact",
-        "description": "Join thousands of businesses that have transformed their operations with our platform. Our solutions have helped companies reduce administrative overhead by 60% and increase trading efficiency by 45% on average.",
+      "features": {
+        "title": "How Akash Engine works",
+        "description": "Three steps. Zero plugin chaos. Faster sites your clients can actually trust.",
         "items": [
           {
-            "title": "Monthly active users",
-            "metric": "100000",
-            "delta": "10",
-            "type": "unit"
+            "title": "Paste the WordPress URL",
+            "description": "Drop in the live URL and we automatically extract pages, posts, images, and metadata."
           },
           {
-            "title": "Daily active users",
-            "metric": "10000",
-            "delta": "-5",
-            "type": "unit"
+            "title": "AI migration runs",
+            "description": "We transform content to a modern stack, preserve SEO structure, and optimize performance defaults."
           },
           {
-            "title": "Monthly recurring revenue",
-            "metric": "100000",
-            "delta": "20",
-            "type": "currency"
+            "title": "Review & launch",
+            "description": "Send the preview, collect approval, and deploy globally with one click."
           },
           {
-            "title": "Cost per acquisition",
-            "metric": "100",
-            "delta": "-10",
-            "type": "currency"
+            "title": "Manage everything in one dashboard",
+            "description": "Track migrations, Lighthouse scores, and client health without juggling ten tools."
+          }
+        ]
+      },
+      "offer_section": {
+        "title": "The Akash Engine Grand Slam Offer",
+        "subtitle": "Every competitor charges $5,000+ and takes 4 weeks. Here's what we do instead:",
+        "items": [
+          "✅ Complete WordPress migration in 25 minutes (not 4 weeks)",
+          "✅ Lighthouse 90+ or full refund — no questions asked",
+          "✅ $0/month hosting forever on Cloudflare Pages",
+          "✅ AI chatbot + AI search built in from day one",
+          "✅ Client owns their data — one-click SQLite export",
+          "✅ emdash admin panel — client edits without calling you",
+          "✅ SEO preserved — every URL, redirect, and meta tag",
+          "✅ Your dashboard — manage all clients from one place",
+          "✅ Scout agent finds leads for you overnight (Agency plan)"
+        ]
+      },
+      "pricing": {
+        "title": "Pricing that makes sense for agencies",
+        "us": {
+          "currency": "$",
+          "plans": [
+            {
+              "name": "Essential",
+              "price": "499",
+              "period": "one-time per migration",
+              "description": "One client. Complete migration.",
+              "features": [
+                "1 WordPress migration",
+                "Cloudflare Pages deployment",
+                "emdash CMS admin",
+                "Lighthouse 90+ guarantee",
+                "6 months AI support",
+                "Data export anytime"
+              ],
+              "cta": "Start free migration"
+            },
+            {
+              "name": "Authority",
+              "price": "1,299",
+              "period": "includes 6 months",
+              "badge": "Best Value",
+              "description": "For agencies doing 5+ migrations per year",
+              "features": [
+                "Unlimited migrations",
+                "6 AI blog posts/month per client",
+                "Local SEO optimization",
+                "Analytics dashboard",
+                "Priority support",
+                "Team seats (3 included)",
+                "Everything in Essential"
+              ],
+              "cta": "Build your agency"
+            },
+            {
+              "name": "Partner",
+              "price": "799",
+              "period": "/month",
+              "description": "Full autonomous pipeline",
+              "features": [
+                "5 migrations/month",
+                "Scout agent (finds leads nightly)",
+                "WhatsApp auto-outreach",
+                "White-label dashboard",
+                "API access + webhooks",
+                "Everything in Authority",
+                "Dedicated Slack channel"
+              ],
+              "cta": "Go fully autonomous"
+            }
+          ]
+        }
+      },
+      "stats": {
+        "title": "Real numbers from real migrations",
+        "description": "Teams switching from plugin maintenance to migration-focused delivery.",
+        "items": [
+          {
+            "metric": "25",
+            "unit": "min",
+            "label": "average migration time"
+          },
+          {
+            "metric": "94",
+            "unit": "/100",
+            "label": "average Lighthouse score"
+          },
+          {
+            "metric": "$0",
+            "unit": "/mo",
+            "label": "hosting cost per client"
+          },
+          {
+            "metric": "9.1",
+            "unit": "/10",
+            "label": "average UDEC quality score"
           }
         ]
       },
       "testimonials": {
-        "title": "Hear from Our Thriving Community",
+        "title": "Agencies that stopped being plugin janitors",
         "items": [
           {
-            "title": "Best decision",
-            "description": "Our goal was to streamline SMB trade, making it easier and faster than ever and we did it together.",
-            "author": {
-              "name": "Hayden Bleasel",
-              "image": "https://github.com/haydenbleasel.png"
-            }
+            "name": "Marcus Webb",
+            "location": "Austin, TX",
+            "role": "Agency Owner",
+            "quote": "I used to spend 40% of my time on WordPress maintenance. Now I spend it on new clients. Akash Engine is the best hire I never made."
           },
           {
-            "title": "Game changer",
-            "description": "This platform revolutionized how we handle our day-to-day operations. The efficiency gains have been remarkable.",
-            "author": {
-              "name": "Lee Robinson",
-              "image": "https://github.com/leerob.png"
-            }
+            "name": "Sarah Chen",
+            "location": "New York",
+            "role": "Freelance Developer",
+            "quote": "My client's law firm site went from 5.8s to 0.6s. She got 3 new clients in the first week from Google. She upgraded her plan without me even asking."
           },
           {
-            "title": "Exceeded expectations",
-            "description": "Implementation was smooth and the results were immediate. Our team adapted quickly and productivity soared.",
-            "author": {
-              "name": "shadcn",
-              "image": "https://github.com/shadcn.png"
-            }
-          },
-          {
-            "title": "Outstanding support",
-            "description": "Not only is the platform powerful, but the customer support team has been exceptional in helping us maximize its potential.",
-            "author": {
-              "name": "Pontus Abrahamsson",
-              "image": "https://github.com/pontusab.png"
-            }
+            "name": "Diego Flores",
+            "location": "Miami, FL",
+            "role": "WordPress Agency, 12 clients",
+            "quote": "The Scout agent found 47 slow WordPress sites in Miami overnight. I sent personalized previews to all of them. Closed 6 in two weeks."
           }
         ]
       },
       "faq": {
-        "title": "Common Questions, Expert Answers",
-        "description": "Get quick answers to your most pressing questions about our platform. We've compiled everything you need to know about transforming your business operations and getting started with modern trading solutions.",
-        "cta": "Any questions? Reach out",
+        "title": "Before you ask — here's what everyone wants to know",
+        "description": "Clear answers before you migrate your first client.",
+        "cta": "Talk to our team",
         "items": [
           {
-            "question": "What is the platform?",
-            "answer": "The platform is a trading platform that allows you to trade with confidence."
+            "question": "What if my client needs WooCommerce?",
+            "answer": "We don't migrate WooCommerce stores — that's a different product category. Akash Engine is optimized for service businesses: dental clinics, law firms, restaurants, consultants, agencies. If it's a store, stay on WooCommerce."
           },
           {
-            "question": "How secure is the platform?",
-            "answer": "Our platform employs enterprise-grade security measures, including end-to-end encryption and multi-factor authentication, to ensure your trading activities remain completely secure."
+            "question": "Will my client's SEO tank?",
+            "answer": "No. We preserve every URL, generate 301 redirects for changed slugs, migrate all meta tags and schema, and submit updated sitemaps. Most clients see SEO improvements within 30 days because their Core Web Vitals finally pass."
           },
           {
-            "question": "What trading features are available?",
-            "answer": "The platform offers comprehensive trading tools including real-time market data, advanced charting, automated trading strategies, and detailed analytics to support informed decision-making."
+            "question": "What CMS does the client get?",
+            "answer": "emdash — a modern headless CMS with a WordPress-familiar editing experience. Clients can update text, images, and blog posts without calling you. It's what WordPress should have been in 2025."
           },
           {
-            "question": "How does pricing work?",
-            "answer": "We offer flexible pricing tiers designed to scale with your business needs, from starter plans for individual traders to enterprise solutions for large organizations."
-          },
-          {
-            "question": "What kind of support do you provide?",
-            "answer": "Our dedicated support team is available 24/7 through multiple channels including live chat, email, and phone. We also provide extensive documentation and training resources."
+            "question": "How is hosting free forever?",
+            "answer": "We deploy to Cloudflare Pages — their free tier includes unlimited sites, unlimited bandwidth, global CDN, and automatic SSL. Cloudflare's business model is enterprise customers. Your client's site is essentially free infrastructure forever."
           }
         ]
       },
       "cta": {
-        "title": "Start Your Business Transformation",
-        "description": "Join thousands of forward-thinking businesses who have already modernized their operations. Our platform offers the tools, support, and efficiency you need to succeed in today's competitive market. Get started in minutes."
+        "title": "You're one migration away from never touching WordPress again.",
+        "description": "Try it free. Migrate one site. See Lighthouse 90+ with your own eyes. If it doesn't work, you pay nothing.",
+        "button": "Start your free migration now"
+      },
+      "cases": {
+        "title": "Migration wins across agencies"
       }
     },
     "blog": {

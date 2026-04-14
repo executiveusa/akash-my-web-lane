@@ -14,28 +14,17 @@ type FAQProps = {
 };
 
 export const FAQ = ({ dictionary }: FAQProps) => (
-  <div className="w-full py-20 lg:py-40">
+  <div className="w-full bg-[#0a0a0a] py-20 text-[#f2ece0] lg:py-28">
     <div className="container mx-auto">
       <div className="grid gap-10 lg:grid-cols-2">
-        <div className="flex flex-col gap-10">
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <h4 className="max-w-xl text-left font-regular text-3xl tracking-tighter md:text-5xl">
-                {dictionary.web.home.faq.title}
-              </h4>
-              <p className="max-w-xl text-left text-lg text-muted-foreground leading-relaxed tracking-tight lg:max-w-lg">
-                {dictionary.web.home.faq.description}
-              </p>
-            </div>
-            <div className="">
-              <Button asChild className="gap-4" variant="outline">
-                <Link href="/contact">
-                  {dictionary.web.home.faq.cta}{" "}
-                  <PhoneCall className="h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-          </div>
+        <div className="flex flex-col gap-4">
+          <h4 className="text-3xl tracking-tight md:text-5xl">{dictionary.web.home.faq.title}</h4>
+          <p className="max-w-xl text-lg text-[#f2ece0]/60">{dictionary.web.home.faq.description}</p>
+          <Button asChild className="w-fit gap-4 border-[#f2ece0]/20 text-[#f2ece0]" variant="outline">
+            <Link href="/contact">
+              {dictionary.web.home.faq.cta} <PhoneCall className="h-4 w-4" />
+            </Link>
+          </Button>
         </div>
         <Accordion className="w-full" collapsible type="single">
           {dictionary.web.home.faq.items.map((item, index) => (
