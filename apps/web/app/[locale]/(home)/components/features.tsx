@@ -1,72 +1,50 @@
 import type { Dictionary } from "@repo/internationalization";
-import { User } from "lucide-react";
+import { Cpu, Globe, LayoutDashboard, Zap } from "lucide-react";
 
 type FeaturesProps = {
   dictionary: Dictionary;
 };
 
-export const Features = ({ dictionary }: FeaturesProps) => (
-  <div className="w-full py-20 lg:py-40">
-    <div className="container mx-auto">
-      <div className="flex flex-col gap-10">
-        <div className="flex flex-col items-start gap-4">
-          <div className="flex flex-col gap-2">
-            <h2 className="max-w-xl text-left font-regular text-3xl tracking-tighter md:text-5xl">
-              {dictionary.web.home.features.title}
-            </h2>
-            <p className="max-w-xl text-left text-lg text-muted-foreground leading-relaxed tracking-tight lg:max-w-lg">
-              {dictionary.web.home.features.description}
-            </p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="flex aspect-square h-full flex-col justify-between rounded-md bg-muted p-6 lg:col-span-2 lg:aspect-auto">
-            <User className="h-8 w-8 stroke-1" />
-            <div className="flex flex-col">
-              <h3 className="text-xl tracking-tight">
-                {dictionary.web.home.features.items[0].title}
-              </h3>
-              <p className="max-w-xs text-base text-muted-foreground">
-                {dictionary.web.home.features.items[0].description}
-              </p>
-            </div>
-          </div>
-          <div className="flex aspect-square flex-col justify-between rounded-md bg-muted p-6">
-            <User className="h-8 w-8 stroke-1" />
-            <div className="flex flex-col">
-              <h3 className="text-xl tracking-tight">
-                {dictionary.web.home.features.items[1].title}
-              </h3>
-              <p className="max-w-xs text-base text-muted-foreground">
-                {dictionary.web.home.features.items[1].description}
-              </p>
-            </div>
-          </div>
+const icons = [Zap, Cpu, Globe, LayoutDashboard];
 
-          <div className="flex aspect-square flex-col justify-between rounded-md bg-muted p-6">
-            <User className="h-8 w-8 stroke-1" />
-            <div className="flex flex-col">
-              <h3 className="text-xl tracking-tight">
-                {dictionary.web.home.features.items[2].title}
-              </h3>
-              <p className="max-w-xs text-base text-muted-foreground">
-                {dictionary.web.home.features.items[2].description}
-              </p>
-            </div>
-          </div>
-          <div className="flex aspect-square h-full flex-col justify-between rounded-md bg-muted p-6 lg:col-span-2 lg:aspect-auto">
-            <User className="h-8 w-8 stroke-1" />
-            <div className="flex flex-col">
-              <h3 className="text-xl tracking-tight">
-                {dictionary.web.home.features.items[3].title}
-              </h3>
-              <p className="max-w-xs text-base text-muted-foreground">
-                {dictionary.web.home.features.items[3].description}
-              </p>
-            </div>
-          </div>
+export const Features = ({ dictionary }: FeaturesProps) => (
+  <section className="w-full bg-[#0a0a0a] py-20 text-[#f2ece0] lg:py-28">
+    <div className="container mx-auto px-4">
+      <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-2">
+          <h2 className="max-w-xl text-left text-3xl font-bold tracking-tight md:text-5xl">
+            {dictionary.web.home.features.title}
+          </h2>
+          <p className="max-w-xl text-left text-lg leading-relaxed text-[#f2ece0]/60 lg:max-w-lg">
+            {dictionary.web.home.features.description}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {dictionary.web.home.features.items.map((item, index) => {
+            const Icon = icons[index % icons.length];
+            const isWide = index === 0 || index === 3;
+            return (
+              <div
+                key={index}
+                className={`flex flex-col justify-between rounded-2xl border border-[#f2ece0]/8 bg-[#f2ece0]/3 p-6 ${
+                  isWide ? "lg:col-span-2" : ""
+                }`}
+              >
+                <Icon className="mb-6 h-7 w-7 text-[#c9a84c]" strokeWidth={1.5} />
+                <div className="flex flex-col gap-1">
+                  <h3 className="font-semibold text-lg text-[#f2ece0] tracking-tight">
+                    {item.title}
+                  </h3>
+                  <p className="max-w-xs text-sm leading-relaxed text-[#f2ece0]/60">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
-  </div>
+  </section>
 );
