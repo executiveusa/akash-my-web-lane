@@ -180,3 +180,5 @@ export const legal = {
     return data.legalPages.item;
   },
 };
+
+export * from "./emdash-deployer";

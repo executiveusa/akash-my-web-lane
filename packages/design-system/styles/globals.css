@@ -214,3 +214,53 @@
   --tw-prose-invert-th-borders: var(--color-border);
   --tw-prose-invert-td-borders: var(--color-border);
 }
+
+/* ── AKASH ENGINE™ Design Tokens ────────────────────────────────────────── */
+:root {
+  --ae-gold: #c9a84c;
+  --ae-gold-dim: rgba(201, 168, 76, 0.12);
+  --ae-gold-border: rgba(201, 168, 76, 0.25);
+  --ae-cream: #f2ece0;
+  --ae-bg: #07090f;
+  --ae-bg-raised: #0d1117;
+  --ae-speed-red: #e85555;
+  --ae-speed-green: #4ade80;
+
+  /* Override shadcn tokens — dark-first design */
+  --background: #07090f;
+  --foreground: #f2ece0;
+  --card: #0d1117;
+  --card-foreground: #f2ece0;
+  --popover: #0d1117;
+  --popover-foreground: #f2ece0;
+  --primary: #c9a84c;
+  --primary-foreground: #07090f;
+  --secondary: rgba(242, 236, 224, 0.07);
+  --secondary-foreground: #f2ece0;
+  --muted: rgba(242, 236, 224, 0.07);
+  --muted-foreground: rgba(242, 236, 224, 0.5);
+  --accent: rgba(201, 168, 76, 0.12);
+  --accent-foreground: #c9a84c;
+  --border: rgba(242, 236, 224, 0.08);
+  --input: rgba(242, 236, 224, 0.08);
+  --ring: #c9a84c;
+  --sidebar: #0d1117;
+  --sidebar-foreground: #f2ece0;
+  --sidebar-primary: #c9a84c;
+  --sidebar-primary-foreground: #07090f;
+  --sidebar-accent: rgba(201, 168, 76, 0.1);
+  --sidebar-accent-foreground: #c9a84c;
+  --sidebar-border: rgba(242, 236, 224, 0.06);
+  --sidebar-ring: #c9a84c;
+}
+
+/* Grid + glow utility classes */
+.ae-grid-bg {
+  background-image:
+    linear-gradient(rgba(201, 168, 76, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 168, 76, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+.ae-glow {
+  background: radial-gradient(circle, rgba(201, 168, 76, 0.07) 0%, transparent 65%);
+}

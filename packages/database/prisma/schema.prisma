@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
@@ -13,9 +10,90 @@ datasource db {
   relationMode = "prisma"
 }
 
-// This is a stub model.
-// Delete it and add your own Prisma models.
-model Page {
-  id   Int    @id @default(autoincrement())
-  name String
+model Client {
+  id              String   @id @default(cuid())
+  orgId           String
+  businessName    String
+  industry        String?
+  wpUrl           String
+  phone           String?
+  email           String?
+  language        String   @default("en")
+  market          String   @default("us")
+  plan            String   @default("free")
+  lighthouseScore Int?
+  udecScore       Float?
+  liveUrl         String?
+  adminUrl        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  jobs            Job[]
+
+  @@index([orgId])
+}
+
+model Job {
+  id              String   @id @default(cuid())
+  orgId           String
+  clientId        String
+  client          Client   @relation(fields: [clientId], references: [id])
+  status          String   @default("queued")
+  stage           String   @default("queued")
+  progress        Int      @default(0)
+  udecScore       Float?
+  lighthouseScore Int?
+  previewUrl      String?
+  liveUrl         String?
+  adminUrl        String?
+  errorMessage    String?
+  costUsd         Float?
+  language        String   @default("en")
+  paymentId       String?
+  paymentProvider String?
+  amountPaid      Int?
+  currency        String   @default("USD")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([orgId])
+  @@index([clientId])
+}
+
+model Lead {
+  id              String    @id @default(cuid())
+  orgId           String
+  businessName    String
+  phone           String?
+  email           String?
+  wpUrl           String
+  lighthouseScore Int?
+  previewUrl      String?
+  city            String?
+  market          String    @default("in")
+  language        String    @default("hi")
+  status          String    @default("new")
+  contacted       Boolean   @default(false)
+  contactedAt     DateTime?
+  replied         Boolean   @default(false)
+  converted       Boolean   @default(false)
+  optedOut        Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+
+  @@index([orgId])
+}
+
+model Spend {
+  id        String   @id @default(cuid())
+  orgId     String
+  date      String
+  provider  String
+  model     String
+  tokensIn  Int      @default(0)
+  tokensOut Int      @default(0)
+  costUsd   Float    @default(0)
+  agentId   String?
+  jobId     String?
+  createdAt DateTime @default(now())
+
+  @@index([orgId, date])
 }
