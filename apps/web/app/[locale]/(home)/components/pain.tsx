@@ -1,7 +1,9 @@
 import type { Dictionary } from "@repo/internationalization";
 
+type PainItem = { icon: string; title: string; description: string };
+
 export const PainSection = ({ dictionary }: { dictionary: Dictionary }) => {
-  const items = dictionary.web.home.pain_section?.items ?? [];
+  const items: PainItem[] = (dictionary.web.home.pain_section?.items ?? []) as PainItem[];
 
   return (
     <section className="border-y border-[#f2ece0]/5 bg-[#0a0a0a] py-24">
@@ -14,7 +16,7 @@ export const PainSection = ({ dictionary }: { dictionary: Dictionary }) => {
         </p>
 
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 md:grid-cols-2">
-          {items.map((item: any, i: number) => (
+          {items.map((item, i) => (
             <div
               className="group rounded-2xl border border-[#e85555]/20 bg-[#e85555]/5 p-6 transition-all hover:border-[#c9a84c]/30 hover:bg-[#c9a84c]/5"
               key={i}

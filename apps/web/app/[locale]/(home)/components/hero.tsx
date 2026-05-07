@@ -1,6 +1,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import type { Dictionary } from "@repo/internationalization";
 import Link from "next/link";
+import { env } from "@/env";
 
 type HeroProps = {
   dictionary: Dictionary;
@@ -70,7 +71,7 @@ export const Hero = async ({ dictionary, locale }: HeroProps) => {
               className="h-14 rounded-xl bg-[#c9a84c] px-8 text-base font-bold text-[#0a0a0a] hover:bg-[#e2bf6a]"
               size="lg"
             >
-              <Link href="/signup">{d.cta_primary}</Link>
+              <Link href={`${env.NEXT_PUBLIC_APP_URL}/sign-up`}>{d.cta_primary}</Link>
             </Button>
             <Button
               asChild
@@ -78,7 +79,7 @@ export const Hero = async ({ dictionary, locale }: HeroProps) => {
               size="lg"
               variant="outline"
             >
-              <Link href="/demo">{d.cta_secondary}</Link>
+              <Link href="/contact">{d.cta_secondary}</Link>
             </Button>
           </div>
 

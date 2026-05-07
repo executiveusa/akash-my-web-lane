@@ -17,7 +17,7 @@ export const OfferSection = ({ dictionary }: { dictionary: Dictionary }) => {
 
           <div className="rounded-2xl border border-[#c9a84c]/20 bg-[#c9a84c]/5 p-8">
             <ul className="space-y-4">
-              {d?.items?.map((item: string, i: number) => (
+              {(d?.items as string[] ?? []).map((item, i) => (
                 <li className="flex items-start gap-3 text-[#f2ece0]/90" key={i}>
                   <span className="shrink-0 text-lg">{item.charAt(0)}</span>
                   <span className="text-base">{item.slice(2)}</span>

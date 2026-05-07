@@ -11,8 +11,7 @@ import {
   NavigationMenuTrigger,
 } from "@repo/design-system/components/ui/navigation-menu";
 import type { Dictionary } from "@repo/internationalization";
-import { CommandIcon, Menu, MoveRight, X } from "lucide-react";
-import Image from "next/image";
+import { Menu, MoveRight, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { env } from "@/env";
@@ -112,19 +111,18 @@ export const Header = ({ dictionary }: HeaderProps) => {
         </div>
         <div className="flex items-center gap-2 lg:justify-center">
           <svg
-            className="-translate-y-[0.5px] h-[18px] w-[18px] fill-current"
+            className="h-5 w-5 text-[#c9a84c]"
             fill="none"
-            height="22"
-            viewBox="0 0 235 203"
+            viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <title>Vercel</title>
+            <title>Akash Engine</title>
             <path
-              d="M117.082 0L234.164 202.794H0L117.082 0Z"
+              d="M13 2L4.09 12.11a1 1 0 0 0-.09 1.1L9 22h6l5-8.79a1 1 0 0 0-.09-1.1L13 2Z"
               fill="currentColor"
             />
           </svg>
-          <p className="whitespace-nowrap font-semibold">next-forge</p>
+          <p className="whitespace-nowrap font-semibold text-[#c9a84c]">Akash Engine™</p>
         </div>
         <div className="flex w-full justify-end gap-4">
           <Button asChild className="hidden md:inline" variant="ghost">
