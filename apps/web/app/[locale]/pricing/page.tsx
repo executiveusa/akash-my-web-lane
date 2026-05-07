@@ -6,6 +6,28 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { env } from "@/env";
 
+type PricingPlan = {
+  name: string;
+  price: string;
+  period: string;
+  description: string;
+  features: string[];
+  cta: string;
+  badge?: string;
+};
+
+type MarketPricing = {
+  currency: string;
+  plans: PricingPlan[];
+};
+
+type PricingDictionary = {
+  title: string;
+  us?: MarketPricing;
+  india?: MarketPricing;
+  mx?: MarketPricing;
+};
+
 type PricingProps = {
   params: Promise<{ locale: string }>;
 };
@@ -26,7 +48,7 @@ export const generateMetadata = async ({
 const Pricing = async ({ params }: PricingProps) => {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
-  const pricing = dictionary.web.home.pricing as any;
+  const pricing = dictionary.web.home.pricing as unknown as PricingDictionary;
 
   const marketPlans =
     locale === "hi"
@@ -35,15 +57,7 @@ const Pricing = async ({ params }: PricingProps) => {
         ? pricing.mx
         : pricing.us;
 
-  const plans: Array<{
-    name: string;
-    price: string;
-    period: string;
-    description: string;
-    features: string[];
-    cta: string;
-    badge?: string;
-  }> = marketPlans?.plans ?? [];
+  const plans: PricingPlan[] = marketPlans?.plans ?? [];
 
   const currency =
     locale === "hi" ? "₹" : locale === "es" ? "MXN " : "$";
@@ -83,7 +97,7 @@ const Pricing = async ({ params }: PricingProps) => {
                 : "md:grid-cols-1"
           }`}
         >
-          {plans.map((plan, i) => {
+          {plans.map((plan) => {
             const isFeatured = Boolean(plan.badge);
             return (
               <div
