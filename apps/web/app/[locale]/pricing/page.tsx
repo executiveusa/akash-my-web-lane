@@ -97,7 +97,7 @@ const Pricing = async ({ params }: PricingProps) => {
                 : "md:grid-cols-1"
           }`}
         >
-          {plans.map((plan, i) => {
+          {plans.map((plan) => {
             const isFeatured = Boolean(plan.badge);
             return (
               <div
