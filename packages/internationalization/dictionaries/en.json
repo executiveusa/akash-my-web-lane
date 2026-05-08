@@ -146,7 +146,8 @@
       },
       "cta": {
         "title": "You're One Migration Away From Never Touching WordPress Again.",
-        "description": "Try it free. Migrate one site. See Lighthouse 90+ with your own eyes. If it doesn't work, you pay nothing. If it does — you just got your first client off WordPress in 25 minutes."
+        "description": "Try it free. Migrate one site. See Lighthouse 90+ with your own eyes. If it doesn't work, you pay nothing. If it does — you just got your first client off WordPress in 25 minutes.",
+        "button": "Start free migration"
       }
     },
     "blog": {
