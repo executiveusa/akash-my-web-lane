@@ -26,7 +26,7 @@ const migrationWins = [
 
 export const Cases = ({ dictionary }: CasesProps) => {
   const [api, setApi] = useState<CarouselApi>();
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!api) return;
@@ -41,7 +41,9 @@ export const Cases = ({ dictionary }: CasesProps) => {
     };
 
     timerRef.current = setTimeout(advance, 2800);
-    return () => clearTimeout(timerRef.current);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, [api]);
 
   return (
