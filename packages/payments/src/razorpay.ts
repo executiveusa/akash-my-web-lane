@@ -6,10 +6,14 @@ import "server-only";
 import Razorpay from "razorpay";
 import { keys } from "../keys";
 
-const razorpay = new Razorpay({
-  key_id: keys().RAZORPAY_KEY_ID,
-  key_secret: keys().RAZORPAY_KEY_SECRET,
-});
+const config = keys();
+
+const razorpay = config.RAZORPAY_KEY_ID && config.RAZORPAY_KEY_SECRET
+  ? new Razorpay({
+      key_id: config.RAZORPAY_KEY_ID,
+      key_secret: config.RAZORPAY_KEY_SECRET,
+    })
+  : null;
 
 export interface RazorpayOrderParams {
   amount: number;
@@ -25,6 +29,9 @@ export interface RazorpayOrderParams {
 }
 
 export async function createOrder(params: RazorpayOrderParams) {
+  if (!razorpay) {
+    throw new Error("Razorpay not configured");
+  }
   return razorpay.orders.create({
     amount: params.amount,
     currency: params.currency,
@@ -34,10 +41,14 @@ export async function createOrder(params: RazorpayOrderParams) {
 }
 
 export async function verifyPayment(orderId: string, paymentId: string, signature: string): Promise<boolean> {
+  const config = keys();
+  if (!config.RAZORPAY_KEY_SECRET) {
+    return false;
+  }
   const crypto = await import("node:crypto");
   const body = `${orderId}|${paymentId}`;
   const expectedSignature = crypto
-    .createHmac("sha256", keys().RAZORPAY_KEY_SECRET)
+    .createHmac("sha256", config.RAZORPAY_KEY_SECRET)
     .update(body)
     .digest("hex");
 

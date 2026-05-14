@@ -1,17 +1,5 @@
-import { database } from "@repo/database";
-
 export const GET = async () => {
-  const newPage = await database.page.create({
-    data: {
-      name: "cron-temp",
-    },
-  });
-
-  await database.page.delete({
-    where: {
-      id: newPage.id,
-    },
-  });
-
+  // Cron job keep-alive endpoint
+  // This endpoint keeps the service alive during idle periods
   return new Response("OK", { status: 200 });
 };

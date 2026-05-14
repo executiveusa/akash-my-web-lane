@@ -62,7 +62,7 @@ export const Hero = async ({ dictionary, locale }: HeroProps) => {
           </h1>
 
           <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-[#f2ece0]/70 md:text-xl">
-            {d.subheadline}
+            Transform your WordPress site into a blazing-fast, AI-powered experience.
           </p>
 
           <div className="mb-16 flex flex-col justify-center gap-4 sm:flex-row">
