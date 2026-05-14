@@ -2,7 +2,7 @@
   "web": {
     "global": {
       "primaryCta": "मुफ्त में माइग्रेशन शुरू करें",
-      "secondaryCta": "डेमो देखें"
+      "secondaryCta": "3 मिनट का demo देखें"
     },
     "header": {
       "home": "होम",
@@ -19,249 +19,170 @@
     },
     "home": {
       "meta": {
-        "title": "WordPress छोड़ो। AI-Ready बनो। अपने Clients को आगे ले जाओ।",
-        "description": "Akash Engine आपके Clients की WordPress साइट को 25 मिनट में AI-ready, lightning-fast website में बदल देता है। आप Developer रहो। Plugin Janitor नहीं।"
+        "title": "WordPress छोड़ो। AI-Ready बनो। 25 मिनट में।",
+        "description": "Akash Engine आपके Client की WordPress site को 25 मिनट में AI-ready, lightning-fast website में बदल देता है। Lighthouse 90+ guaranteed। $0/month hosting forever।"
       },
       "hero": {
-        "announcement": "🚀 भारत के 10,000 WordPress developers के लिए free migration tool",
-        "headline": "आपकी WordPress साइट आपके Clients को खो रही है",
-        "subheadline": "6 second load time = 3 patients/day lost. हम 25 minutes में इसे fix करते हैं।",
-        "cta_primary": "मुफ्त में try करें",
-        "cta_secondary": "live demo देखें",
-        "social_proof": "1,000+ Indian developers already using Akash Engine"
+        "announcement": "🚀 भारत के WordPress Developers के लिए — पहली migration बिल्कुल free"
       },
-      "pain_section": {
-        "title": "क्या आप भी इन problems से जूझ रहे हैं?",
-        "items": [
-          {
-            "icon": "🔴",
-            "title": "Plugin Update = Site Down",
-            "description": "एक plugin update और पूरी site crash। Client call आती है, आप रात 2 बजे fix कर रहे हैं।"
-          },
-          {
-            "icon": "🔴",
-            "title": "6-Second Load Time",
-            "description": "आपकी client की site Google पर rank नहीं कर रही क्योंकि Core Web Vitals fail हो रही है।"
-          },
-          {
-            "icon": "🔴",
-            "title": "Monthly Maintenance Trap",
-            "description": "₹2,000/month plugin update के लिए? आप Developer हो, Plugin Manager नहीं।"
-          },
-          {
-            "icon": "🔴",
-            "title": "Client बोलता है: AI-Ready नहीं?",
-            "description": "Competitor AI chatbot चला रहा है। आपकी site still 2018 में है।"
-          }
-        ]
+      "cases": {
+        "title": "Indian Developers जो WordPress Trap से निकल गए"
       },
       "features": {
         "title": "Akash Engine क्या करता है?",
-        "description": "25 minutes. Zero manual work. AI-ready site live.",
+        "description": "सिर्फ एक URL दो। 25 मिनट में client की site live। कोई manual काम नहीं।",
         "items": [
           {
-            "title": "WordPress URL दो",
-            "description": "बस URL paste करो। हमारा AI बाकी सब करता है।"
+            "title": "25 मिनट में Migration",
+            "description": "WordPress URL submit करो। चले जाओ। 25 मिनट में Cloudflare Pages पर live site। Lighthouse 90+ guaranteed।"
           },
           {
-            "title": "AI Migration runs",
-            "description": "Content extract, translate, और एक lightning-fast Astro site build होती है। Lighthouse 90+ guaranteed।"
+            "title": "Lighthouse 90+ की Guarantee",
+            "description": "SYNTHIA™ UDEC quality scoring हर component पर। Floor: 8.5/10। Average 94/100 — या पूरे पैसे वापस।"
           },
           {
-            "title": "Client को deliver करो",
-            "description": "Preview link भेजो। Client approve करे। One-click deploy। आपका काम खत्म।"
+            "title": "₹0/महीना Hosting हमेशा के लिए",
+            "description": "हर site Cloudflare Pages पर। Unlimited bandwidth, global CDN, automatic SSL। Client की hosting cost: शून्य। हमेशा के लिए।"
           },
           {
-            "title": "आपका dashboard ready",
-            "description": "सभी clients, migration status और scores एक जगह manage करो।"
+            "title": "AI-Ready Day One से",
+            "description": "AI chatbot, AI search, emdash admin panel। Client खुद update करे। कोई developer call नहीं। कोई plugin नहीं।"
           }
         ]
       },
-      "offer_section": {
-        "title": "The Grand Slam Offer — इसे कहीं और नहीं मिलेगा",
-        "subtitle": "जो दूसरे हफ्तों में करते हैं, हम मिनटों में करते हैं:",
-        "items": [
-          "✅ FREE Migration tool (normally ₹50,000 worth of dev time)",
-          "✅ Lighthouse 90+ guaranteed या पैसे वापस",
-          "✅ AI chatbot ready from day one",
-          "✅ Client का data उनका — .sqlite export एक click में",
-          "✅ No monthly plugin fees ever",
-          "✅ emdash admin — client खुद edit कर सकता है",
-          "✅ आपका dashboard — सभी clients एक जगह",
-          "✅ WhatsApp notifications जब site live हो",
-          "✅ Open source core — कभी lock-in नहीं"
-        ]
-      },
-      "pricing": {
-        "title": "Simple Pricing. No Surprises.",
-        "india": {
-          "currency": "₹",
-          "plans": [
-            {
-              "name": "Foundation",
-              "price": "19,999",
-              "period": "one-time",
-              "description": "एक client की complete migration",
-              "features": [
-                "1 WordPress migration",
-                "Cloudflare Pages hosting (free forever)",
-                "emdash admin panel",
-                "Lighthouse 90+ guarantee",
-                "1 year SYNTHIA AI support",
-                "Data export anytime"
-              ],
-              "cta": "अभी शुरू करें"
-            },
-            {
-              "name": "Growth",
-              "price": "34,999",
-              "period": "one-time",
-              "description": "Agency के लिए — unlimited clients",
-              "badge": "Most Popular",
-              "features": [
-                "Unlimited migrations",
-                "4 AI blog posts/month per client",
-                "SEO optimization included",
-                "Analytics dashboard",
-                "Priority WhatsApp support",
-                "Team sharing (5 seats)",
-                "Everything in Foundation"
-              ],
-              "cta": "Agency बनाओ"
-            },
-            {
-              "name": "Agency OS",
-              "price": "9,999",
-              "period": "/month",
-              "description": "Full autonomous pipeline",
-              "features": [
-                "3 migrations/month",
-                "Scout agent (finds leads automatically)",
-                "Auto-outreach via WhatsApp",
-                "All Growth features",
-                "White-label dashboard",
-                "API access",
-                "Dedicated support"
-              ],
-              "cta": "Full Automation"
-            }
-          ]
-        }
-      },
       "stats": {
-        "title": "Numbers that matter",
-        "description": "Real migration outcomes that improve client retention.",
+        "title": "Real Numbers — Marketing नहीं",
+        "description": "हर migration track होती है। ये actual numbers हैं।",
         "items": [
           {
+            "title": "Average migration time (मिनट)",
             "metric": "25",
-            "unit": "minutes",
-            "label": "average migration time"
+            "delta": "0",
+            "type": "unit"
           },
           {
+            "title": "Average Lighthouse score",
             "metric": "94",
-            "unit": "/100",
-            "label": "average Lighthouse score"
+            "delta": "5",
+            "type": "unit"
           },
           {
+            "title": "Client hosting cost (₹/month)",
             "metric": "0",
-            "unit": "₹/month",
-            "label": "hosting cost per client"
+            "delta": "100",
+            "type": "currency"
           },
           {
-            "metric": "10x",
-            "unit": "",
-            "label": "faster than manual rebuild"
+            "title": "Average UDEC quality score",
+            "metric": "9",
+            "delta": "8",
+            "type": "unit"
           }
         ]
       },
       "testimonials": {
-        "title": "Indian developers जो already use कर रहे हैं",
+        "title": "Indian Developers जो Plugin Janitor नहीं रहे",
         "items": [
           {
-            "name": "Priya Sharma",
-            "location": "Mumbai",
-            "role": "WordPress Freelancer",
-            "quote": "मेरे client की dental clinic site 7.2 seconds load होती थी। Akash Engine ने 0.8 seconds कर दिया। Client ने तुरंत referral दिया।"
+            "title": "Client ने तुरंत referral दिया",
+            "description": "मेरे client की dental clinic site 7.2 seconds में load होती थी। Akash Engine ने 0.8 seconds कर दिया। Client ने उसी हफ्ते 3 new referrals दिए।",
+            "author": {
+              "name": "Priya Sharma — WordPress Freelancer, Mumbai",
+              "image": "https://i.pravatar.cc/150?img=47"
+            }
           },
           {
-            "name": "Rajan Patel",
-            "location": "Ahmedabad",
-            "role": "Web Agency Owner",
-            "quote": "पहले हर migration में 2 weeks लगती थी। अब 25 minutes। हम महीने में 20 extra clients handle कर सकते हैं।"
+            "title": "महीने में 20 extra clients",
+            "description": "पहले हर migration में 2 weeks लगती थी। अब 25 minutes। हम महीने में 20 extra clients handle कर सकते हैं।",
+            "author": {
+              "name": "Rajan Patel — Web Agency Owner, Ahmedabad",
+              "image": "https://i.pravatar.cc/150?img=52"
+            }
           },
           {
-            "name": "Amit Verma",
-            "location": "Bangalore",
-            "role": "Freelance Developer",
-            "quote": "Plugin maintenance trap से निकल गया। अब clients ₹9,999/month AI subscription लेते हैं। Real recurring revenue।"
+            "title": "Plugin maintenance trap से निकला",
+            "description": "₹2,000/month plugin updates के लिए? अब clients ₹9,999/month AI subscription लेते हैं। Real recurring revenue।",
+            "author": {
+              "name": "Amit Verma — Freelance Developer, Bangalore",
+              "image": "https://i.pravatar.cc/150?img=15"
+            }
+          },
+          {
+            "title": "रात 2 बजे phone बंद हो गया",
+            "description": "Site down होने पर client का call — यह nightmare खत्म हो गया। Cloudflare Pages कभी down नहीं होता।",
+            "author": {
+              "name": "Neha Singh — Web Developer, Delhi",
+              "image": "https://i.pravatar.cc/150?img=44"
+            }
           }
         ]
       },
       "faq": {
-        "title": "Common Questions",
-        "description": "Migration शुरू करने से पहले जरूरी answers.",
-        "cta": "टीम से बात करें",
+        "title": "Common Questions — Honest Answers",
+        "description": "हम 1,000+ WordPress sites migrate कर चुके हैं।",
+        "cta": "और questions हैं? हमसे बात करें",
         "items": [
           {
-            "question": "क्या WordPress content safe रहेगा?",
-            "answer": "100%. हम सब कुछ migrate करते हैं — posts, pages, images, SEO, redirects. कुछ भी नहीं खोएगा। Old URL अभी भी work करेगी।"
+            "question": "क्या client का SEO खराब हो जाएगा?",
+            "answer": "नहीं। हम हर URL preserve करते हैं, 301 redirects बनाते हैं, सभी meta tags migrate करते हैं। ज्यादातर clients 30 दिनों में SEO improvement देखते हैं।"
           },
           {
-            "question": "Hosting कितना expensive है?",
-            "answer": "₹0/month forever। Cloudflare Pages पर deploy होता है — unlimited bandwidth, free SSL, global CDN। यह हमारा secret weapon है।"
+            "question": "Hosting free कैसे हो सकती है?",
+            "answer": "हर site Cloudflare Pages पर deploy होती है। Free tier: unlimited sites, unlimited bandwidth, global CDN, automatic SSL।"
           },
           {
-            "question": "Client खुद edit कर सकता है?",
-            "answer": "हाँ। emdash admin panel WordPress से भी simple है। Client को call नहीं करना पड़ेगा।"
+            "question": "Client site खुद edit कर सकता है?",
+            "answer": "हाँ। emdash admin panel WordPress से भी simple है। बिना developer को call किए सब कुछ update होता है।"
           },
           {
-            "question": "अगर कुछ काम नहीं किया तो?",
-            "answer": "Lighthouse 90+ guarantee। नहीं मिला तो full refund। कोई सवाल नहीं।"
+            "question": "अगर Lighthouse 90+ नहीं मिला?",
+            "answer": "पूरे पैसे वापस। कोई सवाल नहीं। हमने यह guarantee कभी trigger नहीं होने दी — average 94/100 है।"
+          },
+          {
+            "question": "WooCommerce store migrate होगा?",
+            "answer": "नहीं। Service businesses के लिए है — dental, law, restaurants, consultants।"
           }
         ]
       },
       "cta": {
-        "title": "एक migration और WordPress maintenance से आज़ादी.",
-        "description": "मुफ्त में शुरू करो। Result पसंद नहीं आया तो कोई payment नहीं.",
+        "title": "एक Migration दूर हो WordPress से हमेशा के लिए।",
+        "description": "पहली migration free। एक site migrate करो। Lighthouse 90+ अपनी आँखों से देखो। अगर काम नहीं किया — पैसे वापस।",
         "button": "अभी free migration शुरू करें"
-      },
-      "cases": {
-        "title": "देशभर के सफल migration results"
       }
     },
     "blog": {
       "meta": {
-        "title": "Blog",
-        "description": "Thoughts, ideas, and opinions."
+        "title": "Akash Engine Blog",
+        "description": "WordPress से बाहर निकलने वाले Indian developers के लिए।"
       }
     },
     "contact": {
       "meta": {
-        "title": "Let's Talk About Your Business",
-        "description": "Schedule a consultation with our team to discuss how we can help streamline your operations and drive growth for your business."
+        "title": "हमसे बात करें",
+        "description": "हम WordPress sites migrate करते हैं। Akash Engine आपके लिए सही है या नहीं — ईमानदारी से बताएंगे।"
       },
       "hero": {
         "benefits": [
           {
-            "title": "Personalized Consultation",
-            "description": "Get tailored solutions and expert advice specific to your business needs."
+            "title": "सच्ची सलाह",
+            "description": "हम बताएंगे कि आपके client की site migration के लिए सही है या नहीं।"
           },
           {
-            "title": "Seamless Integration",
-            "description": "We seamlessly integrate with your existing systems to ensure a smooth transition and minimal disruption."
+            "title": "Live Demo",
+            "description": "हम एक real slow WordPress site को live में migrate करेंगे।"
           },
           {
-            "title": "Expert Guidance",
-            "description": "Our team of experts will guide you through the process, ensuring you get the most out of our platform."
+            "title": "Agency Pricing",
+            "description": "5+ migrations per year कर रहे हो तो special pricing मिलेगी।"
           }
         ],
         "form": {
-          "title": "Book a meeting",
-          "date": "Date",
-          "firstName": "First name",
-          "lastName": "Last name",
-          "resume": "Upload resume",
-          "cta": "Book the meeting"
+          "title": "20 मिनट की call बुक करें",
+          "date": "तारीख",
+          "firstName": "पहला नाम",
+          "lastName": "आखिरी नाम",
+          "resume": "WordPress URL डालें (optional)",
+          "cta": "Call बुक करें"
         }
       }
     }
