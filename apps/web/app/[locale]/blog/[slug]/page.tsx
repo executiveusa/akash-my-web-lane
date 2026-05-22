@@ -42,9 +42,13 @@ export const generateMetadata = async ({
 };
 
 export const generateStaticParams = async (): Promise<{ slug: string }[]> => {
-  const posts = await blog.getPosts();
-
-  return posts.map(({ _slug }) => ({ slug: _slug }));
+  try {
+    const posts = await blog.getPosts();
+    return posts.map(({ _slug }) => ({ slug: _slug }));
+  } catch (error) {
+    console.error("[v0] Failed to generate blog page static params:", error);
+    return [];
+  }
 };
 
 const BlogPost = async ({ params }: BlogPostProperties) => {

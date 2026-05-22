@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@repo/design-system/button";
+import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowRight, Zap, Shield, Cloud, CheckCircle, Quote, TrendingUp, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";

@@ -22,13 +22,12 @@ export const config = {
   runtime: "nodejs",
 };
 
-const securityHeaders = env.FLAGS_SECRET
-  ? securityMiddleware(noseconeOptionsWithToolbar)
-  : securityMiddleware(noseconeOptions);
+const securityHeaders = securityMiddleware(noseconeOptions);
 
 // Custom middleware for Arcjet security checks
 const arcjetMiddleware = async (request: NextRequest) => {
-  if (!env.ARCJET_KEY) {
+  const arcjetKey = process.env.ARCJET_KEY;
+  if (!arcjetKey) {
     return;
   }
 
