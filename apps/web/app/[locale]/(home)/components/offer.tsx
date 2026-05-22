@@ -1,7 +1,12 @@
-import type { Dictionary } from "@repo/internationalization";
-
-export const OfferSection = ({ dictionary }: { dictionary: Dictionary }) => {
-  const d = dictionary.web.home.offer_section;
+export const OfferSection = () => {
+  const items = [
+    "✓ Full WordPress to Next.js migration",
+    "✓ All content, images, and SEO preserved",
+    "✓ Lighthouse 90+ performance guaranteed",
+    "✓ AI-powered search and chat included",
+    "✓ $0/month Vercel hosting setup",
+    "✓ 30-day support included",
+  ];
 
   return (
     <section className="bg-[#0d0d0d] py-24">
@@ -11,13 +16,17 @@ export const OfferSection = ({ dictionary }: { dictionary: Dictionary }) => {
             <div className="mb-4 inline-block rounded-full bg-[#c9a84c]/15 px-3 py-1 font-mono text-xs tracking-widest text-[#c9a84c] uppercase">
               The Offer
             </div>
-            <h2 className="mb-3 text-3xl font-bold text-[#f2ece0] md:text-4xl">{d?.title}</h2>
-            <p className="text-[#f2ece0]/50">{d?.subtitle}</p>
+            <h2 className="mb-3 text-3xl font-bold text-[#f2ece0] md:text-4xl">
+              Everything You Need, Nothing You Don&apos;t
+            </h2>
+            <p className="text-[#f2ece0]/50">
+              A complete migration package with no hidden costs.
+            </p>
           </div>
 
           <div className="rounded-2xl border border-[#c9a84c]/20 bg-[#c9a84c]/5 p-8">
             <ul className="space-y-4">
-              {(d?.items as string[] ?? []).map((item, i) => (
+              {items.map((item, i) => (
                 <li className="flex items-start gap-3 text-[#f2ece0]/90" key={i}>
                   <span className="shrink-0 text-lg">{item.charAt(0)}</span>
                   <span className="text-base">{item.slice(2)}</span>
