@@ -62,7 +62,7 @@ export const Hero = async ({ dictionary, locale }: HeroProps) => {
           </h1>
 
           <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-[#f2ece0]/70 md:text-xl">
-            {d.subheadline}
+            Transform your WordPress site into a blazing-fast, AI-powered experience.
           </p>
 
           <div className="mb-16 flex flex-col justify-center gap-4 sm:flex-row">
@@ -71,7 +71,7 @@ export const Hero = async ({ dictionary, locale }: HeroProps) => {
               className="h-14 rounded-xl bg-[#c9a84c] px-8 text-base font-bold text-[#0a0a0a] hover:bg-[#e2bf6a]"
               size="lg"
             >
-              <Link href={`${env.NEXT_PUBLIC_APP_URL}/sign-up`}>{d.cta_primary}</Link>
+              <Link href={`${env.NEXT_PUBLIC_APP_URL}/sign-up`}>Get Started Free</Link>
             </Button>
             <Button
               asChild
@@ -79,12 +79,12 @@ export const Hero = async ({ dictionary, locale }: HeroProps) => {
               size="lg"
               variant="outline"
             >
-              <Link href="/contact">{d.cta_secondary}</Link>
+              <Link href="/contact">Talk to Us</Link>
             </Button>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-[#f2ece0]/40">
-            <span>✓ {d.social_proof}</span>
+            <span>✓ 500+ sites migrated</span>
             <span>✓ Lighthouse 90+ guaranteed</span>
             <span>✓ $0/month hosting</span>
           </div>

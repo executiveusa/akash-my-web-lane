@@ -3,9 +3,9 @@
 import { resend } from "@repo/email";
 import { ContactTemplate } from "@repo/email/templates/contact";
 import { parseError } from "@repo/observability/error";
-import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { headers } from "next/headers";
-import { env } from "@/env";
+
+const RESEND_FROM = process.env.RESEND_FROM ?? "onboarding@resend.dev";
 
 export const contact = async (
   name: string,
@@ -15,7 +15,9 @@ export const contact = async (
   error?: string;
 }> => {
   try {
-    if (env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN) {
+    // Rate limiting is optional - only if Upstash is configured
+    if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+      const { createRateLimiter, slidingWindow } = await import("@repo/rate-limit");
       const rateLimiter = createRateLimiter({
         limiter: slidingWindow(1, "1d"),
       });
@@ -32,8 +34,8 @@ export const contact = async (
     }
 
     await resend.emails.send({
-      from: env.RESEND_FROM,
-      to: env.RESEND_FROM,
+      from: RESEND_FROM,
+      to: RESEND_FROM,
       subject: "Contact form submission",
       replyTo: email,
       react: <ContactTemplate email={email} message={message} name={name} />,

@@ -35,11 +35,8 @@ type PricingProps = {
 export const generateMetadata = async ({
   params,
 }: PricingProps): Promise<Metadata> => {
-  const { locale } = await params;
-  const dictionary = await getDictionary(locale);
-  const title = dictionary.web.home.pricing.title;
   return createMetadata({
-    title,
+    title: "Pricing",
     description:
       "Simple, transparent pricing for every market. India, US, and Mexico.",
   });
@@ -47,15 +44,60 @@ export const generateMetadata = async ({
 
 const Pricing = async ({ params }: PricingProps) => {
   const { locale } = await params;
-  const dictionary = await getDictionary(locale);
-  const pricing = dictionary.web.home.pricing as unknown as PricingDictionary;
 
-  const marketPlans =
-    locale === "hi"
-      ? pricing.india
-      : locale === "es"
-        ? pricing.mx
-        : pricing.us;
+  // Static pricing data
+  const pricing: PricingDictionary = {
+    title: "Simple, Transparent Pricing",
+    us: {
+      currency: "$",
+      plans: [
+        {
+          name: "Starter",
+          price: "0",
+          period: "first migration",
+          description: "Perfect for trying us out",
+          features: [
+            "Full WordPress migration",
+            "Lighthouse 90+ guarantee",
+            "30-day support",
+            "$0/month hosting",
+          ],
+          cta: "Start Free",
+        },
+        {
+          name: "Pro",
+          price: "299",
+          period: "one-time",
+          description: "For established businesses",
+          features: [
+            "Everything in Starter",
+            "AI-powered search",
+            "Custom domain setup",
+            "Priority support",
+            "Analytics dashboard",
+          ],
+          cta: "Get Started",
+          badge: "Most Popular",
+        },
+        {
+          name: "Enterprise",
+          price: "Custom",
+          period: "",
+          description: "For large-scale migrations",
+          features: [
+            "Everything in Pro",
+            "Multiple site migrations",
+            "Dedicated account manager",
+            "SLA guarantee",
+            "Custom integrations",
+          ],
+          cta: "Contact Us",
+        },
+      ],
+    },
+  };
+
+  const marketPlans = pricing.us;
 
   const plans: PricingPlan[] = marketPlans?.plans ?? [];
 

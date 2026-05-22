@@ -30,7 +30,7 @@ const handleCheckoutSessionCompleted = async (
     typeof data.customer === "string" ? data.customer : data.customer.id;
   const user = await getUserFromCustomerId(customerId);
 
-  if (!user) {
+  if (!user || !analytics) {
     return;
   }
 
@@ -51,7 +51,7 @@ const handleSubscriptionScheduleCanceled = async (
     typeof data.customer === "string" ? data.customer : data.customer.id;
   const user = await getUserFromCustomerId(customerId);
 
-  if (!user) {
+  if (!user || !analytics) {
     return;
   }
 
@@ -62,7 +62,7 @@ const handleSubscriptionScheduleCanceled = async (
 };
 
 export const POST = async (request: Request): Promise<Response> => {
-  if (!env.STRIPE_WEBHOOK_SECRET) {
+  if (!env.STRIPE_WEBHOOK_SECRET || !stripe) {
     return NextResponse.json({ message: "Not configured", ok: false });
   }
 
@@ -95,7 +95,7 @@ export const POST = async (request: Request): Promise<Response> => {
       }
     }
 
-    await analytics.shutdown();
+    await analytics?.shutdown();
 
     return NextResponse.json({ result: event, ok: true });
   } catch (error) {
