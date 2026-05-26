@@ -4,16 +4,17 @@ import path from "path";
 
 export async function generateDailyReports(): Promise<void> {
   const today = new Date().toISOString().split("T")[0];
+  const nextDay = new Date(new Date(today).getTime() + 24 * 60 * 60 * 1000).toISOString().split("T")[0];
   const reportDir = path.join(process.cwd(), "ops", "reports", today);
-  
+
   await fs.mkdir(reportDir, { recursive: true });
-  
+
   // Generate per-job report
   const jobs = await db.job.findMany({
     where: {
       createdAt: {
         gte: new Date(`${today}T00:00:00Z`),
-        lt: new Date(`${today}T23:59:59Z`),
+        lt: new Date(`${nextDay}T00:00:00Z`),
       },
     },
   });
