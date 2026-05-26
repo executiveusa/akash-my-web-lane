@@ -33,30 +33,52 @@ model Client {
 }
 
 model Job {
-  id              String   @id @default(cuid())
-  orgId           String
-  clientId        String
-  client          Client   @relation(fields: [clientId], references: [id])
-  status          String   @default("queued")
-  stage           String   @default("queued")
-  progress        Int      @default(0)
-  udecScore       Float?
-  lighthouseScore Int?
-  previewUrl      String?
-  liveUrl         String?
-  adminUrl        String?
-  errorMessage    String?
-  costUsd         Float?
-  language        String   @default("en")
-  paymentId       String?
-  paymentProvider String?
-  amountPaid      Int?
-  currency        String   @default("USD")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id               String   @id @default(cuid())
+  orgId            String
+  clientId         String
+  client           Client   @relation(fields: [clientId], references: [id])
+  status           String   @default("queued")
+  stage            String   @default("queued")
+  progress         Int      @default(0)
+  udecScore        Float?
+  lighthouseScore  Int?
+  previewUrl       String?
+  liveUrl          String?
+  adminUrl         String?
+  errorMessage     String?
+  costUsd          Float?
+  language         String   @default("en")
+  paymentId        String?
+  paymentProvider  String?
+  amountPaid       Int?
+  currency         String   @default("USD")
+  retryCount       Int      @default(0)
+  estimatedCostUsd Float?
+  actualCostUsd    Float?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   @@index([orgId])
   @@index([clientId])
+  @@index([status])
+  @@index([paymentId])
+  @@index([paymentProvider])
+}
+
+model OperationTask {
+  id        String   @id @default(cuid())
+  orgId     String
+  type      String // "PAYMENT_MIGRATION_FAILED", "QUALITY_REVIEW_REQUIRED", etc.
+  relatedId String // jobId, paymentId, etc.
+  priority  String   @default("medium") // "critical", "high", "medium", "low"
+  status    String   @default("pending") // "pending", "in_progress", "completed", "dismissed"
+  metadata  Json? // Store error details, scores, etc.
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orgId])
+  @@index([type, status])
+  @@index([priority, status])
 }
 
 model Lead {

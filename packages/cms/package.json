@@ -10,6 +10,8 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
+    "@repo/migrations": "workspace:*",
+    "@repo/secrets": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.8",
     "basehub": "^9.5.0",
     "react": "19.2.0",

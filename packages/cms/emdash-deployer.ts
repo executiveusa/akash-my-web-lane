@@ -1,9 +1,6 @@
 import "server-only";
-
-const CF_TOKEN = process.env.CLOUDFLARE_API_TOKEN ?? "";
-const CF_ACCOUNT = process.env.CLOUDFLARE_ACCOUNT_ID ?? "";
-const LANE_API = process.env.LANE_API_URL ?? "";
-const LANE_KEY = process.env.LANE_API_KEY ?? "";
+import { getSecret } from "@repo/secrets";
+import { QualityGate, CircuitBreaker } from "@repo/migrations";
 
 export interface MigrationRequest {
   wpUrl: string;
@@ -17,7 +14,7 @@ export interface MigrationRequest {
 
 export interface MigrationResult {
   jobId: string;
-  status: "queued" | "running" | "completed" | "failed";
+  status: "queued" | "running" | "completed" | "failed" | "quality_review_required";
   previewUrl?: string;
   liveUrl?: string;
   adminUrl?: string;
@@ -29,12 +26,25 @@ export interface MigrationResult {
 export async function startMigration(
   request: MigrationRequest
 ): Promise<{ jobId: string }> {
-  if (!LANE_API) throw new Error("LANE_API_URL not configured");
+  const circuitBreaker = new CircuitBreaker();
+  const { allowed, reason } = await circuitBreaker.checkCanStartMigration({
+    clientSlug: request.clientSlug,
+    plan: request.plan,
+  });
 
-  const res = await fetch(`${LANE_API}/api/jobs`, {
+  if (!allowed) {
+    throw new Error(`Circuit Breaker blocked migration: ${reason}`);
+  }
+
+  const laneApiUrl = await getSecret("LANE_API_URL");
+  const laneApiKey = await getSecret("LANE_API_KEY");
+
+  if (!laneApiUrl) throw new Error("LANE_API_URL not configured");
+
+  const res = await fetch(`${laneApiUrl}/api/jobs`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${LANE_KEY}`,
+      Authorization: `Bearer ${laneApiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -54,22 +64,34 @@ export async function startMigration(
 }
 
 export async function getJobStatus(jobId: string): Promise<MigrationResult> {
-  const res = await fetch(`${LANE_API}/api/jobs/${jobId}`, {
-    headers: { Authorization: `Bearer ${LANE_KEY}` },
+  const laneApiUrl = await getSecret("LANE_API_URL");
+  const laneApiKey = await getSecret("LANE_API_KEY");
+
+  const res = await fetch(`${laneApiUrl}/api/jobs/${jobId}`, {
+    headers: { Authorization: `Bearer ${laneApiKey}` },
     cache: "no-store",
   });
 
   if (!res.ok) throw new Error(`Job ${jobId} not found`);
   const d = await res.json();
+
+  // Enforce quality gate
+  const gate = new QualityGate();
+  const gateResult = await gate.enforceGate(
+    d.id,
+    d.udec_score,
+    d.lighthouse_score
+  );
+
   return {
     jobId: d.id,
-    status: d.status,
+    status: gateResult.allowed ? d.status : "quality_review_required",
     previewUrl: d.preview_url,
-    liveUrl: d.live_url,
+    liveUrl: gateResult.allowed ? d.live_url : undefined,
     adminUrl: d.admin_url,
     lighthouseScore: d.lighthouse_score,
     udecScore: d.udec_score,
-    errorMessage: d.error_message,
+    errorMessage: gateResult.allowed ? d.error_message : gateResult.reason,
   };
 }
 
@@ -77,13 +99,16 @@ export async function setCustomDomain(
   projectName: string,
   domain: string
 ): Promise<void> {
-  if (!CF_TOKEN || !CF_ACCOUNT) return;
+  const cfToken = await getSecret("CLOUDFLARE_API_TOKEN");
+  const cfAccount = await getSecret("CLOUDFLARE_ACCOUNT_ID");
+
+  if (!cfToken || !cfAccount) return;
   await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT}/pages/projects/${projectName}/domains`,
+    `https://api.cloudflare.com/client/v4/accounts/${cfAccount}/pages/projects/${projectName}/domains`,
     {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${CF_TOKEN}`,
+        Authorization: `Bearer ${cfToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ name: domain }),
@@ -94,11 +119,14 @@ export async function setCustomDomain(
 export async function listClientSites(): Promise<
   { name: string; url: string; created: string }[]
 > {
-  if (!CF_TOKEN || !CF_ACCOUNT) return [];
+  const cfToken = await getSecret("CLOUDFLARE_API_TOKEN");
+  const cfAccount = await getSecret("CLOUDFLARE_ACCOUNT_ID");
+
+  if (!cfToken || !cfAccount) return [];
   const res = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT}/pages/projects?per_page=100`,
+    `https://api.cloudflare.com/client/v4/accounts/${cfAccount}/pages/projects?per_page=100`,
     {
-      headers: { Authorization: `Bearer ${CF_TOKEN}` },
+      headers: { Authorization: `Bearer ${cfToken}` },
       next: { revalidate: 60 },
     }
   );

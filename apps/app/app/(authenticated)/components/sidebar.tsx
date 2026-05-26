@@ -26,6 +26,7 @@ import {
   GlobeIcon,
   KeyRoundIcon,
   LayoutDashboardIcon,
+  ListChecksIcon,
   MessageCircleIcon,
   Settings2Icon,
   UsersIcon,
@@ -47,6 +48,7 @@ const navMain = [
   { title: "Leads", url: "/leads", icon: ZapIcon },
   { title: "Revenue", url: "/revenue", icon: DollarSignIcon },
   { title: "WhatsApp", url: "/whatsapp", icon: MessageCircleIcon },
+  { title: "Tasks", url: "/tasks", icon: ListChecksIcon },
   { title: "SYNTHIA", url: "/synthia", icon: BotIcon },
 ];
 

@@ -28,6 +28,7 @@
     "@repo/typescript-config": "workspace:*",
     "@turbo/gen": "^2.5.8",
     "@types/node": "^24.7.0",
+    "cross-env": "^10.1.0",
     "tsup": "^8.5.0",
     "turbo": "^2.5.8",
     "typescript": "^5.9.3",

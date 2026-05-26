@@ -2,14 +2,7 @@ import { showBetaFeature } from "@repo/feature-flags";
 import { getDictionary } from "@repo/internationalization";
 import { createMetadata } from "@repo/seo/metadata";
 import type { Metadata } from "next";
-import { CTA } from "./components/cta";
-import { FAQ } from "./components/faq";
-import { Features } from "./components/features";
-import { Hero } from "./components/hero";
-import { OfferSection } from "./components/offer";
-import { PainSection } from "./components/pain";
-import { Stats } from "./components/stats";
-import { Testimonials } from "./components/testimonials";
+import { MyWebLaneLanding } from "./components/my-web-lane";
 
 type HomeProps = {
   params: Promise<{
@@ -20,7 +13,10 @@ type HomeProps = {
 export const generateMetadata = async ({ params }: HomeProps): Promise<Metadata> => {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
-  return createMetadata(dictionary.web.home.meta);
+  return createMetadata({
+    title: "My Web Lane — Stop Losing to Slower Competitors",
+    description: "We migrate slow WordPress sites to blazing-fast Astro + Cloudflare Pages — in 25 minutes.",
+  });
 };
 
 const Home = async ({ params }: HomeProps) => {
@@ -30,15 +26,7 @@ const Home = async ({ params }: HomeProps) => {
 
   return (
     <>
-      {betaFeature && <div className="w-full bg-black py-2 text-center text-white">Beta feature now available</div>}
-      <Hero dictionary={dictionary} locale={locale} />
-      <PainSection />
-      <Features dictionary={dictionary} />
-      <OfferSection />
-      <Stats />
-      <Testimonials />
-      <FAQ dictionary={dictionary} />
-      <CTA dictionary={dictionary} />
+      <MyWebLaneLanding />
     </>
   );
 };
