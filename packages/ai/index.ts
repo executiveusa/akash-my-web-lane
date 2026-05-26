@@ -10,11 +10,14 @@ const baseURL = env.SYNTHIA_GATEWAY_URL
 
 const apiKey = env.GATEWAY_API_KEY ?? env.OPENAI_API_KEY ?? "";
 
-const gateway = createOpenAI({ baseURL, apiKey, compatibility: "compatible" });
+const gateway = createOpenAI({ baseURL, apiKey });
 
-export const models = {
+import type { EmbeddingModel, LanguageModel } from "ai";
+
+export const models: Record<string, LanguageModel> = {
   chat: gateway("smart"),
   fast: gateway("fast"),
   research: gateway("research"),
-  embeddings: gateway("text-embedding-3-small"),
 };
+
+export const embeddings: EmbeddingModel<string> = gateway.embedding("text-embedding-3-small");

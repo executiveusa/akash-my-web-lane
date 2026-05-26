@@ -1,89 +1,93 @@
 import { SYNTHIAAdvisorWidget } from "./components/synthia-advisor";
-
-const metrics = [
-  { label: "Today's revenue", value: "$4,890", note: "Stripe + Razorpay" },
-  { label: "Active migrations", value: "18", note: "6 at risk" },
-  { label: "Average Lighthouse", value: "93", note: "last 30 days" },
-  { label: "Scout leads overnight", value: "47", note: "11 high-fit" },
-];
-
-const activeJobs = [
-  { client: "Sunrise Dental", stage: "deploying", progress: 85 },
-  { client: "Rivera Law Group", stage: "generating", progress: 62 },
-  { client: "Bombay Bites", stage: "extracting", progress: 24 },
-];
-
-const scout = [
-  "47 slow WordPress sites detected in target markets",
-  "19 previews generated successfully",
-  "11 prospects enriched with contact data",
-  "6 outreach sequences scheduled",
-];
+import { database as db } from "@repo/database";
+import { auth } from "@repo/auth/server";
 
 export default async function DashboardPage() {
+  const { userId } = await auth();
+
+  // Fetch real metrics
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const [todayRevenue, activeMigrations, avgScoreAgg, recentJobs] = await Promise.all([
+    db.job.aggregate({
+      where: { orgId: userId || "system", createdAt: { gte: today }, status: "completed" },
+      _sum: { amountPaid: true },
+    }),
+    db.job.count({
+      where: { orgId: userId || "system", status: { in: ["queued", "running"] } },
+    }),
+    db.job.aggregate({
+      where: { orgId: userId || "system", status: "completed", udecScore: { not: null } },
+      _avg: { udecScore: true },
+    }),
+    db.job.findMany({
+      where: { orgId: userId || "system" },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      include: { client: true },
+    })
+  ]);
+
+  const metrics = [
+    { label: "Today's revenue", value: `$${((todayRevenue._sum.amountPaid || 0) / 100).toFixed(2)}`, note: "Stripe" },
+    { label: "Active migrations", value: activeMigrations.toString(), note: "In progress" },
+    { label: "Avg UDEC Score", value: (avgScoreAgg._avg.udecScore || 0).toFixed(1), note: "Target: 8.5" },
+  ];
+
   return (
-    <div className="space-y-6 p-6">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div className="flex flex-1 flex-col gap-8 p-6">
+      <div className="grid gap-4 md:grid-cols-3">
         {metrics.map((metric) => (
-          <div className="rounded-xl border bg-card p-4" key={metric.label}>
-            <p className="text-muted-foreground text-sm">{metric.label}</p>
-            <p className="text-2xl font-bold">{metric.value}</p>
-            <p className="text-muted-foreground text-xs">{metric.note}</p>
+          <div key={metric.label} className="rounded-xl border bg-card p-6 shadow-sm">
+            <h3 className="text-sm font-medium text-muted-foreground">{metric.label}</h3>
+            <div className="mt-2 text-3xl font-bold">{metric.value}</div>
+            <p className="mt-1 text-xs text-muted-foreground">{metric.note}</p>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section className="rounded-xl border bg-card p-5">
-          <h2 className="mb-3 font-semibold text-xl">Active migrations</h2>
-          <div className="space-y-3">
-            {activeJobs.map((job) => (
-              <div key={job.client}>
-                <div className="mb-1 flex items-center justify-between text-sm">
-                  <span>{job.client}</span>
-                  <span className="text-muted-foreground">{job.stage}</span>
-                </div>
-                <div className="h-2 rounded bg-muted">
-                  <div className="h-2 rounded bg-primary" style={{ width: `${job.progress}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="rounded-xl border bg-card p-5">
-          <h2 className="mb-3 font-semibold text-xl">Scout activity</h2>
-          <ul className="list-disc space-y-2 pl-5 text-sm">
-            {scout.map((line) => (
-              <li key={line}>{line}</li>
-            ))}
-          </ul>
-        </section>
-      </div>
-
-      <section className="rounded-xl border bg-card p-5">
-        <h2 className="mb-3 font-semibold text-xl">Client roster snapshot</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b text-muted-foreground">
-                <th className="py-2">Client</th>
-                <th className="py-2">Industry</th>
-                <th className="py-2">Lighthouse</th>
-                <th className="py-2">UDEC</th>
-                <th className="py-2">MRR</th>
+      <section>
+        <h2 className="mb-4 text-xl font-semibold tracking-tight">Recent Migrations</h2>
+        <div className="rounded-xl border bg-card overflow-hidden">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-muted/50 text-muted-foreground">
+              <tr>
+                <th className="px-4 py-3 font-medium">Client</th>
+                <th className="px-4 py-3 font-medium">Industry</th>
+                <th className="px-4 py-3 font-medium">Lighthouse</th>
+                <th className="px-4 py-3 font-medium">UDEC</th>
+                <th className="px-4 py-3 font-medium">Status</th>
               </tr>
             </thead>
-            <tbody>
-              <tr className="border-b">
-                <td className="py-2">Sunrise Dental</td><td>Dental Clinic</td><td className="text-green-500">96</td><td>9.3</td><td>$699</td>
-              </tr>
-              <tr className="border-b">
-                <td className="py-2">Rivera Law Group</td><td>Law Firm</td><td className="text-yellow-500">82</td><td>8.8</td><td>$499</td>
-              </tr>
-              <tr>
-                <td className="py-2">Bombay Bites</td><td>Restaurant</td><td className="text-red-500">67</td><td>7.9</td><td>$299</td>
-              </tr>
+            <tbody className="divide-y">
+              {recentJobs.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-4 py-3 text-center text-muted-foreground">No recent migrations</td>
+                </tr>
+              ) : (
+                recentJobs.map((job) => (
+                  <tr key={job.id} className="hover:bg-muted/50 transition-colors">
+                    <td className="px-4 py-3 font-medium">{job.client?.businessName || job.id}</td>
+                    <td className="px-4 py-3 text-muted-foreground capitalize">{job.client?.industry || "N/A"}</td>
+                    <td className="px-4 py-3 font-mono">{job.lighthouseScore || "-"}</td>
+                    <td className="px-4 py-3 font-mono font-medium">
+                      <span className={(job.udecScore || 0) >= 8.5 ? "text-emerald-500" : "text-amber-500"}>
+                        {job.udecScore || "-"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`capitalize inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        job.status === "completed" ? "bg-emerald-100 text-emerald-700" :
+                        job.status === "failed" ? "bg-red-100 text-red-700" :
+                        "bg-blue-100 text-blue-700"
+                      }`}>
+                        {job.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

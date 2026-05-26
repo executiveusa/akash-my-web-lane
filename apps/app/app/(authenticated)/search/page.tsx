@@ -22,9 +22,9 @@ export const generateMetadata = async ({
 
 const SearchPage = async ({ searchParams }: SearchPageProperties) => {
   const { q } = await searchParams;
-  const pages = await database.page.findMany({
+  const clients = await database.client.findMany({
     where: {
-      name: {
+      businessName: {
         contains: q,
       },
     },
@@ -44,9 +44,9 @@ const SearchPage = async ({ searchParams }: SearchPageProperties) => {
       <Header page="Search" pages={["Building Your Application"]} />
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          {pages.map((page) => (
-            <div className="aspect-video rounded-xl bg-muted/50" key={page.id}>
-              {page.name}
+          {clients.map((client) => (
+            <div className="aspect-video rounded-xl bg-muted/50 p-4" key={client.id}>
+              {client.businessName}
             </div>
           ))}
         </div>
