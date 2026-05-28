@@ -1,0 +1,22 @@
+{
+  "name": "pi-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "15.0.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "sass": "1.77.2",
+    "@headlessui/react": "^1.7.22",
+    "@heroicons/react": "^1.0.6"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}

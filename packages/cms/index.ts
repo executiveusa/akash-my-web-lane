@@ -24,87 +24,28 @@ const imageFragment = fragmentOn("BlockImage", {
  * Blog Fragments & Queries
  * -----------------------------------------------------------------------------------------------*/
 
-const postMetaFragment = fragmentOn("PostsItem", {
+const postMetaFragment = fragmentOn("BlockList", {
   _slug: true,
   _title: true,
-  authors: {
-    _title: true,
-    avatar: imageFragment,
-    xUrl: true,
-  },
-  categories: {
-    _title: true,
-  },
-  date: true,
-  description: true,
-  image: imageFragment,
 });
 
-const postFragment = fragmentOn("PostsItem", {
+const postFragment = fragmentOn("BlockList", {
   ...postMetaFragment,
-  body: {
-    plainText: true,
-    json: {
-      content: true,
-      toc: true,
-    },
-    readingTime: true,
-  },
 });
 
 export type PostMeta = fragmentOn.infer<typeof postMetaFragment>;
 export type Post = fragmentOn.infer<typeof postFragment>;
 
 export const blog = {
-  postsQuery: fragmentOn("Query", {
-    blog: {
-      posts: {
-        items: postMetaFragment,
-      },
-    },
-  }),
-
-  latestPostQuery: fragmentOn("Query", {
-    blog: {
-      posts: {
-        __args: {
-          orderBy: "_sys_createdAt__DESC",
-        },
-        item: postFragment,
-      },
-    },
-  }),
-
-  postQuery: (slug: string) => ({
-    blog: {
-      posts: {
-        __args: {
-          filter: {
-            _sys_slug: { eq: slug },
-          },
-        },
-        item: postFragment,
-      },
-    },
-  }),
-
+  // Dummy implementation returning empty data
   getPosts: async (): Promise<PostMeta[]> => {
-    const data = await basehub.query(blog.postsQuery);
-
-    return data.blog.posts.items;
+    return [];
   },
-
   getLatestPost: async (): Promise<Post | null> => {
-    const data = await basehub.query(blog.latestPostQuery);
-
-    return data.blog.posts.item;
+    return null;
   },
-
   getPost: async (slug: string): Promise<Post | null> => {
-    const query = blog.postQuery(slug);
-    const data = await basehub.query(query);
-
-    return data.blog.posts.item;
+    return null;
   },
 };
 
@@ -112,73 +53,23 @@ export const blog = {
  * Legal Fragments & Queries
  * -----------------------------------------------------------------------------------------------*/
 
-const legalPostMetaFragment = fragmentOn("LegalPagesItem", {
-  _slug: true,
-  _title: true,
-  description: true,
-});
-
-const legalPostFragment = fragmentOn("LegalPagesItem", {
-  ...legalPostMetaFragment,
-  body: {
-    plainText: true,
-    json: {
-      content: true,
-      toc: true,
-    },
-    readingTime: true,
-  },
-});
-
-export type LegalPostMeta = fragmentOn.infer<typeof legalPostMetaFragment>;
-export type LegalPost = fragmentOn.infer<typeof legalPostFragment>;
-
+// Dummy legal implementation with no real queries
 export const legal = {
-  postsQuery: fragmentOn("Query", {
-    legalPages: {
-      items: legalPostFragment,
-    },
-  }),
-
-  latestPostQuery: fragmentOn("Query", {
-    legalPages: {
-      __args: {
-        orderBy: "_sys_createdAt__DESC",
-      },
-      item: legalPostFragment,
-    },
-  }),
-
-  postQuery: (slug: string) =>
-    fragmentOn("Query", {
-      legalPages: {
-        __args: {
-          filter: {
-            _sys_slug: { eq: slug },
-          },
-        },
-        item: legalPostFragment,
-      },
-    }),
-
-  getPosts: async (): Promise<LegalPost[]> => {
-    const data = await basehub.query(legal.postsQuery);
-
-    return data.legalPages.items;
+  // Returns an empty list of legal post meta
+  getPosts: async (): Promise<LegalPostMeta[]> => {
+    return [];
   },
-
+  // Returns null for latest legal post
   getLatestPost: async (): Promise<LegalPost | null> => {
-    const data = await basehub.query(legal.latestPostQuery);
-
-    return data.legalPages.item;
+    return null;
   },
-
+  // Returns null for a specific legal post
   getPost: async (slug: string): Promise<LegalPost | null> => {
-    const query = legal.postQuery(slug);
-    const data = await basehub.query(query);
-
-    return data.legalPages.item;
+    return null;
   },
 };
+
+type LegalPostMeta = any;
+type LegalPost = any;
 
 export * from "./emdash-deployer";

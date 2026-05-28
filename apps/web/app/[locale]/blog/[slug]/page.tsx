@@ -34,10 +34,12 @@ export const generateMetadata = async ({
     return {};
   }
 
+  // @ts-ignore
+  const anyPost = post as any;
   return createMetadata({
-    title: post._title,
-    description: post.description,
-    image: post.image.url,
+    title: anyPost._title,
+    description: anyPost.description ?? anyPost._title,
+    image: anyPost.image?.url,
   });
 };
 

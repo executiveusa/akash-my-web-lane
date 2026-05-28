@@ -21,5 +21,5 @@ export const env = createEnv({
   ],
   server: {},
   client: {},
-  runtimeEnv: {},
+  runtimeEnv: process.env,
 });

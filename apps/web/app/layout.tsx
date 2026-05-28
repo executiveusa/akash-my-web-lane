@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import LLMProxyToggle from "../components/LLMProxyToggle";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={geist.className}>
         {children}
+        <LLMProxyToggle />
       </body>
     </html>
   );
