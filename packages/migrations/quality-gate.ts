@@ -14,11 +14,20 @@ export class QualityGate {
   
   async enforceGate(
     jobId: string,
-    udecScore: number,
+    udecScore: number | null | undefined,
     lighthouseScore?: number
   ): Promise<QualityGateResult> {
+    if (!udecScore) {
+      log.warn("Quality gate check skipped: missing UDEC score", { jobId });
+      return {
+        allowed: false,
+        action: "review",
+        reason: "Quality analysis in progress. Score not yet available.",
+      };
+    }
+
     log.info("Quality gate check", { jobId, udecScore, lighthouseScore });
-    
+
     // Pass: meets floor
     if (udecScore >= QualityGate.MINIMUM_UDEC) {
       log.info("Quality gate passed", { jobId, udecScore });
@@ -28,14 +37,14 @@ export class QualityGate {
         reason: `Quality score ${udecScore.toFixed(1)}/10 meets requirements`,
       };
     }
-    
+
     // Fail: below review threshold
     if (udecScore < QualityGate.REVIEW_THRESHOLD) {
       log.warn("Quality gate FAILED — critical review required", {
         jobId,
         udecScore,
       });
-      
+
       // Create manual review task
       await db.operationTask.create({
         data: {

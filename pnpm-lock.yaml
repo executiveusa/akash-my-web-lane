@@ -23473,7 +23473,7 @@ snapshots:
       schema-utils: 4.3.0
       serialize-javascript: 6.0.2
       terser: 5.39.0
-      webpack: 5.98.0(esbuild@0.25.10)
+      webpack: 5.98.0(esbuild@0.25.2)
     optionalDependencies:
       esbuild: 0.25.10
 

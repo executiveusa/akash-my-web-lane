@@ -29,7 +29,7 @@ const handlePaymentIntentSucceeded = async (data: Stripe.PaymentIntent) => {
   const customerId = typeof data.customer === "string" ? data.customer : data.customer.id;
   const user = await getUserFromCustomerId(customerId);
   if (!user) {
-    log.warn("Payment received but no matching user found", { customerId: data.id });
+    log.warn("Payment received but no matching user found", { paymentIntentId: data.id });
     return;
   }
 
@@ -80,12 +80,28 @@ const handlePaymentIntentSucceeded = async (data: Stripe.PaymentIntent) => {
 
     const jobId = result!.jobId;
 
+    // Check for idempotency: prevent duplicate migrations from retried webhooks
+    const existingJob = await db.job.findFirst({
+      where: {
+        paymentId: data.id,
+        paymentProvider: "stripe",
+      },
+    });
+
+    if (existingJob) {
+      log.warn("Duplicate payment webhook detected, skipping job creation", {
+        paymentId: data.id,
+        existingJobId: existingJob.id,
+      });
+      return;
+    }
+
     // Store in database
     await db.job.create({
       data: {
         id: jobId,
         orgId: user.id,
-        clientId: "", // Link to Client if needed
+        clientId: client_slug as string,
         paymentId: data.id,
         amountPaid: data.amount_received || 0,
         currency: data.currency.toUpperCase(),

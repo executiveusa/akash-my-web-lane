@@ -11,18 +11,18 @@ export function MyWebLaneLanding() {
     if (typeof window === "undefined") return;
 
     const runScripts = () => {
-      const html = document.documentElement;
-      
+      const container = containerRef.current || document.querySelector('.mwl-container');
+
       // Theme
       const btn = document.getElementById('themeBtn');
-      if (btn) {
+      if (btn && container) {
         const stored = localStorage.getItem('mwl-theme');
-        if (stored) { html.dataset.theme = stored; }
-        btn.textContent = html.dataset.theme === 'dark' ? '🌙' : '☀️';
+        if (stored) { container.dataset.theme = stored; }
+        btn.textContent = container.dataset.theme === 'dark' ? '🌙' : '☀️';
 
         btn.onclick = () => {
-          const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
-          html.dataset.theme = next;
+          const next = container.dataset.theme === 'dark' ? 'light' : 'dark';
+          container.dataset.theme = next;
           localStorage.setItem('mwl-theme', next);
           btn.textContent = next === 'dark' ? '🌙' : '☀️';
         };
