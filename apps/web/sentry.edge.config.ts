@@ -1,3 +1,2 @@
-import { initializeSentry } from "@repo/observability/edge";
+// Sentry disabled for this build
 
-initializeSentry();

@@ -4,12 +4,17 @@ import { z } from "zod";
 
 export const env = createEnv({
   extends: [core()],
-  server: {},
+  server: {
+    FLAGS_SECRET: z.string().optional(),
+    ARCJET_KEY: z.string().optional(),
+  },
   client: {
     NEXT_PUBLIC_RAZORPAY_KEY_ID: z.string().optional(),
     NEXT_PUBLIC_MARKET: z.enum(["in", "us", "mx"]).optional(),
   },
   runtimeEnv: {
+    FLAGS_SECRET: process.env.FLAGS_SECRET,
+    ARCJET_KEY: process.env.ARCJET_KEY,
     NEXT_PUBLIC_RAZORPAY_KEY_ID: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
     NEXT_PUBLIC_MARKET: process.env.NEXT_PUBLIC_MARKET,
   },
