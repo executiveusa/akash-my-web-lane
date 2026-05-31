@@ -17,16 +17,18 @@ const RequestSchema = z.object({
 });
 
 export const POST = async (request: Request): Promise<Response> => {
+  let userId: string | null | undefined;
   try {
     // 1. Authenticate
-    const { userId } = await auth();
+    const auth_result = await auth();
+    userId = auth_result.userId;
     if (!userId) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
-    
+
     // 2. Parse request
     const body = await request.json();
     const parseResult = RequestSchema.safeParse(body);
@@ -39,7 +41,7 @@ export const POST = async (request: Request): Promise<Response> => {
     }
 
     const { systemPrompt, messages } = parseResult.data;
-    
+
     // 3. Call AI
     const { text, usage } = await generateText({
       model: models.chat,
@@ -49,14 +51,14 @@ export const POST = async (request: Request): Promise<Response> => {
         content: m.content,
       })),
     });
-    
+
     // 4. Log interaction
     log.info("SYNTHIA Advisor interaction", {
       userId,
       messageCount: messages.length,
       usage,
     });
-    
+
     // 5. Return response
     return NextResponse.json({
       content: text,

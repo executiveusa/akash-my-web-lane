@@ -1,0 +1,1 @@
+{"version":3,"file":"page-actions.d.ts","sourceRoot":"","sources":["page-actions.tsx"],"names":[],"mappings":"AAsBA,wBAAgB,aAAa,CAAC;AAC5B;;GAEG;AACH,WAAW,GACZ,EAAE;IACD,WAAW,EAAE,MAAM,CAAC;CACrB,+BAqCA;AAMD,wBAAgB,WAAW,CAAC,EAC1B,WAAW,EACX,SAAS,GACV,EAAE;IACD;;OAEG;IACH,WAAW,EAAE,MAAM,CAAC;IAEpB;;OAEG;IACH,SAAS,EAAE,MAAM,CAAC;CACnB,+BAyJA"}
