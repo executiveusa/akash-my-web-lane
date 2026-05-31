@@ -1,18 +1,22 @@
 {
-  "name": "pi-agent",
+  "name": "@repo/pi-agent",
   "version": "0.1.0",
   "private": true,
   "main": "src/api.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "echo 'Pi agent module'",
+    "typecheck": "tsc --noEmit",
     "test": "echo \"No tests yet\""
   },
   "dependencies": {
-    "@earendil/pi": "^1.0.0",
+    "@repo/cms": "workspace:*",
+    "@repo/observability": "workspace:*",
     "dotenv": "^16.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.2.2"
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "24.7.0",
+    "typescript": "^5.9.3"
   }
 }

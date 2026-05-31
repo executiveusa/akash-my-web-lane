@@ -1,8 +1,7 @@
 // src/api.ts – JSON‑RPC entry point for the Pi agent
 import { createServer } from "http";
 import { config } from "dotenv";
-import { Pi } from "@earendil/pi"; // hypothetical SDK
-import { startMigration, getJobStatus, setCustomDomain, listClientSites } from "../../packages/cms/emdash-deployer";
+import { startMigration, getJobStatus, setCustomDomain, listClientSites } from "@repo/cms";
 
 config();
 
