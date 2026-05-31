@@ -2,37 +2,114 @@
 /**
  * VERCEL DEPLOYMENT VERIFICATION AGENT
  *
- * This script provides absolute certainty that a Vercel deployment is:
- * 1. Successfully built
- * 2. Live and serving traffic
- * 3. All endpoints responding correctly
- * 4. No 404 or error states
- * 5. Latest commit actually deployed
+ * Production-ready, repo-agnostic skill for absolute deployment verification.
+ * Drop this file into any project and use it immediately.
  *
- * Usage: node vercel-deployment-agent.js <PROJECT_ID>
- * Environment: VERCEL_TOKEN (required)
+ * Based on Vercel Labs agent-skills patterns:
+ * https://github.com/vercel-labs/agent-skills
+ *
+ * Usage:
+ *   VERCEL_TOKEN=<token> node vercel-deployment-agent.js <PROJECT_ID>
  */
 
-import https from 'https';
-import http from 'http';
+const https = require('https');
+const http = require('http');
 
 class VercelDeploymentAgent {
-  constructor(projectId, token) {
-    if (!projectId) {
-      console.error('❌ PROJECT_ID required');
-      console.error('Usage: node vercel-deployment-agent.js <PROJECT_ID>');
-      process.exit(1);
+  constructor(projectId, token, options = {}) {
+    if (!projectId?.trim() || !token?.trim()) {
+      throw new Error('projectId and vercelToken are required');
     }
-    if (!token) {
-      console.error('❌ VERCEL_TOKEN environment variable required');
-      process.exit(1);
-    }
-    this.projectId = projectId;
-    this.token = token;
-    this.deploymentUrl = null;
-    this.productionUrl = null;
+
+    this.projectId = projectId.trim();
+    this.token = token.trim();
+    this.timeout = options.timeout ?? 1800000; // 30 minutes
+    this.retryInterval = options.retryInterval ?? 5000; // 5 seconds
+    this.maxRetries = Math.floor(this.timeout / this.retryInterval);
+    this.testEndpoints = options.testEndpoints ?? ['/', '/api/health', '/health'];
+    this.failFast = options.failFast ?? true;
+    this.startTime = 0;
   }
 
+  /**
+   * Main entry point
+   */
+  async verify() {
+    this.startTime = Date.now();
+
+    try {
+      // Validate token
+      await this.validateToken();
+
+      // Get project info
+      const project = await this.getProject();
+
+      // Get deployments
+      const deployments = await this.getDeployments();
+      if (deployments.length === 0) {
+        throw {
+          code: 'NO_DEPLOYMENTS',
+          message: 'No deployments found',
+          suggestion: 'Push code or trigger deployment in Vercel dashboard',
+          recoveryUrl: 'https://vercel.com/dashboard',
+        };
+      }
+
+      const latestDeployment = deployments[0];
+
+      // Poll until READY
+      const deployment = await this.pollDeploymentReady(latestDeployment.uid);
+
+      // Get production URL
+      const productionUrl = this.getProductionUrl(project, deployment);
+
+      // Test endpoints
+      const endpoints = await this.testAllEndpoints(productionUrl);
+
+      // Get commit info
+      const commitDeployed = latestDeployment.meta?.githubCommitSha || 'unknown';
+
+      // Optional optimization analysis
+      const analysis = await this.analyzeOptimization(deployment, project);
+
+      const allChecksPassed = endpoints.every(e => e.success) && deployment.state === 'READY';
+
+      return {
+        success: allChecksPassed,
+        deployment: {
+          id: deployment.uid,
+          state: deployment.state,
+          url: productionUrl,
+          createdAt: deployment.createdAt,
+          buildTime: Date.now() - this.startTime,
+        },
+        project: {
+          name: project.name,
+          productionUrl,
+          framework: this.detectFramework(project),
+        },
+        verification: {
+          domainResponds: endpoints[endpoints.length - 1]?.success ?? false,
+          statusCode: endpoints[endpoints.length - 1]?.status ?? 0,
+          endpointsHealthy: endpoints.every(e => e.success),
+          commitDeployed,
+          allChecksPassed,
+        },
+        endpoints,
+        analysis,
+      };
+
+    } catch (error) {
+      return {
+        success: false,
+        error: this.formatError(error),
+      };
+    }
+  }
+
+  /**
+   * HTTP request to Vercel API
+   */
   async request(method, path, body = null) {
     return new Promise((resolve, reject) => {
       const options = {
@@ -51,13 +128,13 @@ class VercelDeploymentAgent {
         res.on('end', () => {
           try {
             resolve({
-              status: res.statusCode,
+              status: res.statusCode || 500,
               headers: res.headers,
               data: data ? JSON.parse(data) : null,
             });
           } catch (e) {
             resolve({
-              status: res.statusCode,
+              status: res.statusCode || 500,
               headers: res.headers,
               data,
             });
@@ -71,63 +148,29 @@ class VercelDeploymentAgent {
     });
   }
 
-  async fetchDeployments() {
-    console.log('\n📋 Fetching deployment history...');
-    const response = await this.request('GET', `/v6/deployments?projectId=${this.projectId}&limit=10`);
-
-    if (response.status !== 200) {
-      throw new Error(`Failed to fetch deployments: ${response.status}`);
-    }
-
-    const deployments = response.data.deployments || [];
-    if (deployments.length === 0) {
-      throw new Error('No deployments found for this project');
-    }
-
-    return deployments;
-  }
-
-  async getProjectInfo() {
-    console.log('\n📊 Fetching project information...');
-    const response = await this.request('GET', `/v9/projects/${this.projectId}`);
-
-    if (response.status !== 200) {
-      throw new Error(`Failed to fetch project: ${response.status}`);
-    }
-
-    return response.data;
-  }
-
-  async checkDeploymentStatus(deploymentId) {
-    const response = await this.request('GET', `/v13/deployments/${deploymentId}`);
-
-    if (response.status !== 200) {
-      throw new Error(`Failed to fetch deployment ${deploymentId}: ${response.status}`);
-    }
-
-    return response.data;
-  }
-
+  /**
+   * HTTP request to domain
+   */
   async httpRequest(url, timeout = 10000) {
     return new Promise((resolve, reject) => {
       const protocol = url.startsWith('https') ? https : http;
+      const startTime = Date.now();
       const timeoutHandle = setTimeout(() => {
-        reject(new Error(`Request timeout after ${timeout}ms`));
+        reject(new Error(`Timeout after ${timeout}ms`));
       }, timeout);
 
       const req = protocol.get(url, {
-        headers: {
-          'User-Agent': 'VercelDeploymentAgent/1.0',
-        },
+        headers: { 'User-Agent': 'VercelDeploymentAgent/1.0' },
       }, (res) => {
         clearTimeout(timeoutHandle);
         let data = '';
         res.on('data', chunk => data += chunk);
         res.on('end', () => {
           resolve({
-            status: res.statusCode,
+            status: res.statusCode || 500,
             headers: res.headers,
             data,
+            responseTime: Date.now() - startTime,
           });
         });
       });
@@ -139,117 +182,267 @@ class VercelDeploymentAgent {
     });
   }
 
-  async testEndpoint(url, expectedStatus = 200) {
+  /**
+   * Validate token
+   */
+  async validateToken() {
     try {
-      const response = await this.httpRequest(url);
-      if (response.status === expectedStatus) {
-        return { success: true, status: response.status };
+      const response = await this.request('GET', '/v2/user');
+
+      if (response.status === 401) {
+        throw {
+          code: 'INVALID_TOKEN',
+          message: 'Token is invalid or expired',
+          suggestion: 'Generate new token at https://vercel.com/account/tokens',
+          recoveryUrl: 'https://vercel.com/account/tokens',
+        };
       }
-      return { success: false, status: response.status, expected: expectedStatus };
-    } catch (err) {
-      return { success: false, error: err.message };
+
+      if (response.status !== 200) {
+        throw {
+          code: 'AUTH_FAILED',
+          message: `Authentication failed (${response.status})`,
+          suggestion: 'Check VERCEL_TOKEN environment variable',
+        };
+      }
+    } catch (error) {
+      if (error.code) throw error;
+      throw {
+        code: 'TOKEN_VALIDATION_ERROR',
+        message: error.message || 'Token validation failed',
+        suggestion: 'Verify Vercel token is valid',
+      };
     }
   }
 
-  async verifyDeployment() {
-    try {
-      console.log('\n🚀 VERCEL DEPLOYMENT VERIFICATION AGENT');
-      console.log('=========================================\n');
+  /**
+   * Get project
+   */
+  async getProject() {
+    const response = await this.request('GET', `/v9/projects/${this.projectId}`);
 
-      // Step 1: Get project info
-      const project = await this.getProjectInfo();
-      console.log(`✅ Project: ${project.name}`);
-      this.productionUrl = `https://${project.productionDeployment?.url || project.name}.vercel.app`;
-      console.log(`✅ Production URL: ${this.productionUrl}`);
-
-      // Step 2: Fetch deployments
-      const deployments = await this.fetchDeployments();
-      const latestDeployment = deployments[0];
-
-      console.log(`\n📦 Latest Deployment ID: ${latestDeployment.uid}`);
-      console.log(`📦 Created: ${new Date(latestDeployment.createdAt).toLocaleString()}`);
-      console.log(`📦 Git Commit: ${latestDeployment.meta?.githubCommitSha?.substring(0, 7) || 'N/A'}`);
-
-      // Step 3: Check deployment status
-      const deployment = await this.checkDeploymentStatus(latestDeployment.uid);
-
-      console.log(`\n🔍 Deployment State: ${deployment.state}`);
-
-      if (deployment.state === 'READY') {
-        console.log('✅ Deployment is READY');
-      } else if (deployment.state === 'BUILDING') {
-        console.log('⏳ Deployment is BUILDING - waiting...');
-        await this.sleep(5000);
-        return await this.verifyDeployment();
-      } else if (deployment.state === 'ERROR') {
-        console.log('❌ Deployment ERROR:');
-        console.log(JSON.stringify(deployment.errorMessage, null, 2));
-        process.exit(1);
-      } else {
-        console.log(`⚠️  Deployment state: ${deployment.state}`);
-      }
-
-      // Step 4: Test production domain
-      console.log(`\n🌐 Testing production domain: ${this.productionUrl}`);
-      const prodTest = await this.testEndpoint(this.productionUrl);
-
-      if (!prodTest.success) {
-        console.log(`❌ CRITICAL: Production domain NOT responding`);
-        console.log(`   Status: ${prodTest.status || prodTest.error}`);
-        console.log(`   Expected: 200`);
-        throw new Error('Production domain is not serving traffic');
-      }
-      console.log(`✅ Production domain responding (${prodTest.status})`);
-
-      // Step 5: Test common endpoints
-      console.log(`\n🔗 Testing critical endpoints...`);
-      const endpoints = [
-        { url: `${this.productionUrl}/api/health`, name: 'Health Check' },
-        { url: `${this.productionUrl}/`, name: 'Home Page' },
-      ];
-
-      const apiUrl = `https://${project.name}-api.vercel.app`;
-      endpoints.push({ url: `${apiUrl}/health`, name: 'API Health' });
-
-      let allEndpointsHealthy = true;
-      for (const endpoint of endpoints) {
-        const test = await this.testEndpoint(endpoint.url);
-        if (test.success && test.status !== 404) {
-          console.log(`✅ ${endpoint.name}: ${test.status}`);
-        } else {
-          console.log(`❌ ${endpoint.name}: ${test.status || test.error}`);
-          allEndpointsHealthy = false;
-        }
-      }
-
-      // Step 6: Final summary
-      console.log('\n' + '='.repeat(50));
-      if (allEndpointsHealthy && prodTest.success) {
-        console.log('✅ DEPLOYMENT VERIFICATION COMPLETE');
-        console.log('✅ All checks passed');
-        console.log('✅ Production is LIVE and HEALTHY');
-        console.log('\n📊 DEPLOYMENT CONFIRMED AS LIVE');
-        console.log(`   URL: ${this.productionUrl}`);
-        console.log(`   Commit: ${deployment.meta?.githubCommitSha?.substring(0, 7)}`);
-        console.log(`   Deployed: ${new Date(deployment.createdAt).toLocaleString()}`);
-        console.log('='.repeat(50));
-        return true;
-      } else {
-        console.log('❌ DEPLOYMENT VERIFICATION FAILED');
-        console.log('❌ Some endpoints are not responding correctly');
-        throw new Error('Deployment verification failed');
-      }
-
-    } catch (error) {
-      console.error('\n❌ DEPLOYMENT VERIFICATION FAILED');
-      console.error(`❌ Error: ${error.message}`);
-      console.error('\n🔧 Troubleshooting steps:');
-      console.error('1. Check VERCEL_TOKEN is valid');
-      console.error('2. Verify PROJECT_ID is correct');
-      console.error('3. Ensure deployment is not still building');
-      console.error('4. Check Vercel dashboard for deployment errors');
-      process.exit(1);
+    if (response.status === 404) {
+      throw {
+        code: 'PROJECT_NOT_FOUND',
+        message: 'Project not found',
+        suggestion: 'Verify project ID at https://vercel.com/dashboard',
+        recoveryUrl: 'https://vercel.com/dashboard',
+      };
     }
+
+    if (response.status !== 200) {
+      throw {
+        code: 'PROJECT_FETCH_FAILED',
+        message: `Failed to fetch project (${response.status})`,
+      };
+    }
+
+    return response.data;
+  }
+
+  /**
+   * Get deployments
+   */
+  async getDeployments() {
+    const response = await this.request('GET', `/v6/deployments?projectId=${this.projectId}&limit=10`);
+
+    if (response.status !== 200) {
+      throw {
+        code: 'DEPLOYMENT_FETCH_FAILED',
+        message: `Failed to fetch deployments (${response.status})`,
+      };
+    }
+
+    return response.data.deployments || [];
+  }
+
+  /**
+   * Get deployment details
+   */
+  async getDeploymentDetails(deploymentId) {
+    const response = await this.request('GET', `/v13/deployments/${deploymentId}`);
+
+    if (response.status !== 200) {
+      throw {
+        code: 'DEPLOYMENT_DETAILS_FAILED',
+        message: `Failed to fetch deployment (${response.status})`,
+      };
+    }
+
+    return response.data;
+  }
+
+  /**
+   * Poll until deployment is READY
+   */
+  async pollDeploymentReady(deploymentId, retryCount = 0) {
+    const deployment = await this.getDeploymentDetails(deploymentId);
+
+    if (deployment.state === 'READY') {
+      return deployment;
+    }
+
+    if (deployment.state === 'ERROR') {
+      throw {
+        code: 'DEPLOYMENT_BUILD_FAILED',
+        message: 'Deployment build failed',
+        suggestion: 'Check build logs at https://vercel.com/dashboard',
+        recoveryUrl: `https://vercel.com/deployments/${deploymentId}`,
+      };
+    }
+
+    if (retryCount >= this.maxRetries) {
+      throw {
+        code: 'DEPLOYMENT_TIMEOUT',
+        message: 'Deployment timeout (exceeded 30 minutes)',
+        suggestion: 'Check if deployment is stuck',
+        recoveryUrl: `https://vercel.com/deployments/${deploymentId}`,
+      };
+    }
+
+    await this.sleep(this.retryInterval);
+    return this.pollDeploymentReady(deploymentId, retryCount + 1);
+  }
+
+  /**
+   * Get production URL
+   */
+  getProductionUrl(project, deployment) {
+    if (deployment.alias?.length > 0) {
+      return `https://${deployment.alias[0]}`;
+    }
+
+    if (project.productionDeployment?.url) {
+      return `https://${project.productionDeployment.url}`;
+    }
+
+    return `https://${project.name}.vercel.app`;
+  }
+
+  /**
+   * Test all endpoints
+   */
+  async testAllEndpoints(baseUrl) {
+    const results = [];
+
+    for (const endpoint of this.testEndpoints) {
+      const url = `${baseUrl}${endpoint}`;
+
+      try {
+        const response = await this.httpRequest(url);
+        const success = response.status === 200;
+
+        results.push({
+          url,
+          status: response.status,
+          responseTime: response.responseTime,
+          success,
+          error: success ? null : `HTTP ${response.status}`,
+        });
+
+        if (!success && this.failFast) break;
+      } catch (error) {
+        results.push({
+          url,
+          status: 0,
+          responseTime: 0,
+          success: false,
+          error: error.message,
+        });
+
+        if (this.failFast) break;
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Analyze optimization opportunities
+   */
+  async analyzeOptimization(deployment, project) {
+    try {
+      const recommendations = [];
+      const deploymentSize = deployment.deploymentSize || 0;
+
+      if (deploymentSize > 500 * 1024 * 1024) {
+        recommendations.push({
+          priority: 'HIGH',
+          category: 'Cost',
+          issue: 'Large deployment size',
+          suggestion: 'Enable compression and code splitting',
+        });
+      }
+
+      recommendations.push({
+        priority: 'MEDIUM',
+        category: 'Performance',
+        issue: 'Enable HTTP/2 Server Push',
+        suggestion: 'Configure vercel.json for critical resources',
+      });
+
+      return {
+        metrics: { buildSize: deploymentSize, deploymentSize },
+        recommendations,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Detect framework
+   */
+  detectFramework(project) {
+    if (project.framework) return project.framework;
+
+    if (project.buildCommand?.includes('next')) return 'Next.js';
+    if (project.buildCommand?.includes('nuxt')) return 'Nuxt';
+    if (project.buildCommand?.includes('gatsby')) return 'Gatsby';
+    if (project.buildCommand?.includes('vite')) return 'Vite';
+
+    return 'Unknown';
+  }
+
+  /**
+   * Format errors
+   */
+  formatError(error) {
+    if (error?.code) return error;
+
+    const message = error?.message || String(error);
+
+    if (message.includes('ECONNREFUSED')) {
+      return {
+        code: 'CONNECTION_REFUSED',
+        message: 'Cannot connect to Vercel API',
+        suggestion: 'Check internet connection or firewall',
+        recoveryUrl: 'https://status.vercel.com',
+      };
+    }
+
+    if (message.includes('ENOTFOUND') || message.includes('DNS')) {
+      return {
+        code: 'DNS_FAILURE',
+        message: 'Cannot resolve Vercel API',
+        suggestion: 'Check DNS or try again',
+      };
+    }
+
+    if (message.includes('timeout') || message.includes('Timeout')) {
+      return {
+        code: 'REQUEST_TIMEOUT',
+        message: 'Request timed out',
+        suggestion: 'Try again in a moment',
+      };
+    }
+
+    return {
+      code: 'UNKNOWN_ERROR',
+      message: message || 'Unknown error',
+      suggestion: 'Check error details above',
+      recoveryUrl: 'https://vercel.com/docs/api',
+    };
   }
 
   sleep(ms) {
@@ -257,16 +450,28 @@ class VercelDeploymentAgent {
   }
 }
 
-// Main execution
-async function main() {
+// CLI usage
+if (require.main === module) {
   const projectId = process.argv[2];
   const token = process.env.VERCEL_TOKEN;
 
+  if (!projectId || !token) {
+    console.error('Usage: VERCEL_TOKEN=<token> node vercel-deployment-agent.js <PROJECT_ID>');
+    process.exit(1);
+  }
+
   const agent = new VercelDeploymentAgent(projectId, token);
-  await agent.verifyDeployment();
+  agent.verify().then(result => {
+    if (result.success) {
+      console.log('✅ DEPLOYMENT VERIFIED');
+      console.log(JSON.stringify(result, null, 2));
+      process.exit(0);
+    } else {
+      console.error('❌ DEPLOYMENT VERIFICATION FAILED');
+      console.error(JSON.stringify(result.error, null, 2));
+      process.exit(1);
+    }
+  });
 }
 
-main().catch(err => {
-  console.error('Fatal error:', err.message);
-  process.exit(1);
-});
+module.exports = VercelDeploymentAgent;
