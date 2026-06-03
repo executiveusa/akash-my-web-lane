@@ -1,4 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "turbo build --concurrency=2"
+  "buildCommand": "turbo build --concurrency=2 --filter='!storybook'"
 }
