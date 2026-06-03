@@ -12,7 +12,8 @@
         "**/generated/**",
         "storybook-static/**",
         ".react-email/**"
-      ]
+      ],
+      "excludePatterns": ["apps/storybook"]
     },
     "test": {
       "dependsOn": ["^test"]
