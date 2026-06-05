@@ -1,0 +1,29 @@
+{
+  "name": "@repo/synthia",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./analyzer": "./src/analyzer.ts",
+    "./designer": "./src/designer.ts",
+    "./builder": "./src/builder.ts",
+    "./judge": "./src/judge.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@repo/ai": "workspace:*",
+    "@ai-sdk/openai": "^1.0.0",
+    "ai": "^4.0.0",
+    "firecrawl": "^1.0.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "24.7.0",
+    "typescript": "^5.9.3"
+  }
+}
