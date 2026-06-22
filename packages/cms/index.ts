@@ -1,18 +1,21 @@
-import { basehub as basehubClient, fragmentOn } from "basehub";
-// ensures types are passed through to apps that use this package
-import type * as _types from "./basehub-types.d.ts";
-// Only load basehub config if token is available
-if (process.env.BASEHUB_TOKEN) {
-  import("./basehub.config").catch(() => {
-    // Silently ignore config load errors when token is not available
+// Lazy load basehub only when needed
+let basehub: any = null;
+let fragmentOn: any = null;
+
+try {
+  const { basehub: basehubClient, fragmentOn: basehubFragmentOn } = await import("basehub");
+  await import("./basehub.config");
+  basehub = basehubClient({
+    token: process.env.BASEHUB_TOKEN,
   });
+  fragmentOn = basehubFragmentOn;
+} catch (error) {
+  // If basehub initialization fails, continue with dummy implementations
+  fragmentOn = () => ({});
 }
 
-const basehub = process.env.BASEHUB_TOKEN
-  ? basehubClient({
-      token: process.env.BASEHUB_TOKEN,
-    })
-  : null;
+// ensures types are passed through to apps that use this package
+import type * as _types from "./basehub-types.d.ts";
 
 /* -------------------------------------------------------------------------------------------------
  * Common Fragments
@@ -39,8 +42,8 @@ const postFragment = fragmentOn("BlockList", {
   ...postMetaFragment,
 });
 
-export type PostMeta = fragmentOn.infer<typeof postMetaFragment>;
-export type Post = fragmentOn.infer<typeof postFragment>;
+export type PostMeta = any;
+export type Post = any;
 
 export const blog = {
   // Dummy implementation returning empty data

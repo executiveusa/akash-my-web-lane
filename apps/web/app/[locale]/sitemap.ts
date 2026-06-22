@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import { blog, legal } from "@repo/cms";
 import type { MetadataRoute } from "next";
 import { env } from "@/env";
 
@@ -9,8 +8,17 @@ const pages = appFolders
   .filter((folder) => !folder.name.startsWith("_"))
   .filter((folder) => !folder.name.startsWith("("))
   .map((folder) => folder.name);
-const blogs = (await blog.getPosts()).map((post) => post._slug);
-const legals = (await legal.getPosts()).map((post) => post._slug);
+
+// Load CMS data only if available
+let blogs: string[] = [];
+let legals: string[] = [];
+try {
+  const { blog, legal } = await import("@repo/cms");
+  blogs = (await blog.getPosts()).map((post: any) => post._slug);
+  legals = (await legal.getPosts()).map((post: any) => post._slug);
+} catch (error) {
+  // CMS not configured, use empty arrays
+}
 const protocol = env.VERCEL_PROJECT_PRODUCTION_URL?.startsWith("https")
   ? "https"
   : "http";

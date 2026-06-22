@@ -2,49 +2,7 @@ import { Status } from "@repo/observability/status";
 import Link from "next/link";
 import { env } from "@/env";
 
-// CMS imports disabled when BASEHUB_TOKEN is not set
-// import { legal } from "@repo/cms";
-// import { Feed } from "@repo/cms/components/feed";
-
 export const Footer = () => {
-  // Temporarily use static data until CMS is configured
-  const data = { legalPages: { items: [] } };
-
-  return (
-
-      const navigationItems = [
-        {
-          title: "Home",
-          href: "/",
-          description: "",
-        },
-        {
-          title: "Pages",
-          description: "Managing a small business today is already tough.",
-          items: [
-            {
-              title: "Blog",
-              href: "/blog",
-            },
-          ],
-        },
-        {
-          title: "Legal",
-          description: "We stay on top of the latest legal requirements.",
-          items: data.legalPages.items.map((post) => ({
-            title: post._title,
-            href: `/legal/${post._slug}`,
-          })),
-        },
-      ];
-
-      if (env.NEXT_PUBLIC_DOCS_URL) {
-        navigationItems.at(1)?.items?.push({
-          title: "Docs",
-          href: env.NEXT_PUBLIC_DOCS_URL,
-        });
-      }
-
   const navigationItems = [
     {
       title: "Home",
@@ -64,10 +22,7 @@ export const Footer = () => {
     {
       title: "Legal",
       description: "We stay on top of the latest legal requirements.",
-      items: data.legalPages.items.map((post) => ({
-        title: post._title,
-        href: `/legal/${post._slug}`,
-      })),
+      items: [],
     },
   ];
 
