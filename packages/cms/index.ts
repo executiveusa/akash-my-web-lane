@@ -1,12 +1,18 @@
 import { basehub as basehubClient, fragmentOn } from "basehub";
 // ensures types are passed through to apps that use this package
 import type * as _types from "./basehub-types.d.ts";
-import { keys } from "./keys";
-import "./basehub.config";
+// Only load basehub config if token is available
+if (process.env.BASEHUB_TOKEN) {
+  import("./basehub.config").catch(() => {
+    // Silently ignore config load errors when token is not available
+  });
+}
 
-const basehub = basehubClient({
-  token: keys().BASEHUB_TOKEN,
-});
+const basehub = process.env.BASEHUB_TOKEN
+  ? basehubClient({
+      token: process.env.BASEHUB_TOKEN,
+    })
+  : null;
 
 /* -------------------------------------------------------------------------------------------------
  * Common Fragments
