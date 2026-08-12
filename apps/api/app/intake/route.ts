@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { analyzeWordPressSite } from "@repo/synthia/analyzer";
 import { z } from "zod";
 
+const BOTANIC_SUPABASE_URL = "https://cyxdevcjycmffhmwxojh.supabase.co";
+
 const IntakeSchema = z.object({
   wpUrl: z.string().url("Must be a valid URL"),
   email: z.string().email().optional(),
@@ -11,7 +13,8 @@ const IntakeSchema = z.object({
 
 /**
  * POST /api/intake
- * Accepts a WordPress URL, runs SYNTHIA analysis, returns an evidence-labelled audit report.
+ * Accepts a WordPress URL, runs SYNTHIA analysis, and stores the evidence through
+ * the same portable MyWebLane Supabase boundary used by the public web app.
  */
 export async function POST(req: NextRequest) {
   let body: unknown;
@@ -33,15 +36,11 @@ export async function POST(req: NextRequest) {
 
   try {
     const report = await analyzeWordPressSite(wpUrl, clientName, whatsapp);
-
-    try {
-      await storeAuditLead({ wpUrl, email, clientName, whatsapp, report });
-    } catch (dbError) {
-      console.error("DB store failed (non-fatal):", dbError);
-    }
+    const persistence = await storeAuditLead({ wpUrl, email, clientName, whatsapp, report });
 
     return NextResponse.json({
       success: true,
+      persistence,
       report: {
         wpUrl: report.wpUrl,
         niche: report.niche,
@@ -72,7 +71,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-/** Store lead in DB for dashboard visibility */
 async function storeAuditLead(data: {
   wpUrl: string;
   email?: string;
@@ -80,17 +78,32 @@ async function storeAuditLead(data: {
   whatsapp?: string;
   report: any;
 }) {
-  const { neon } = await import("@neondatabase/serverless");
-  const DATABASE_URL = process.env.DATABASE_URL;
-  if (!DATABASE_URL) return;
+  const supabaseUrl =
+    process.env.SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    BOTANIC_SUPABASE_URL;
 
-  const sql = neon(DATABASE_URL);
-  await sql`
-    INSERT INTO audit_leads (wp_url, email, client_name, whatsapp, report, created_at)
-    VALUES (${data.wpUrl}, ${data.email ?? null}, ${data.clientName ?? null},
-            ${data.whatsapp ?? null}, ${JSON.stringify(data.report)}, NOW())
-    ON CONFLICT (wp_url) DO UPDATE SET
-      report = EXCLUDED.report,
-      updated_at = NOW()
-  `;
+  const response = await fetch(`${supabaseUrl.replace(/\/$/, "")}/functions/v1/myweblane-audit-intake`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      wp_url: data.wpUrl,
+      email: data.email ?? null,
+      client_name: data.clientName ?? null,
+      whatsapp: data.whatsapp ?? null,
+      report: data.report,
+      evidence_source: data.report?.scoreSource ?? "SYNTHIA",
+      measured_at: data.report?.analyzedAt ?? new Date().toISOString(),
+    }),
+    signal: AbortSignal.timeout(10_000),
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(`MyWebLane audit persistence failed (${response.status}): ${detail.slice(0, 250)}`);
+  }
+
+  const result = (await response.json()) as { success?: boolean; audit_id?: string };
+  return { persisted: result.success === true, auditId: result.audit_id ?? null };
 }
