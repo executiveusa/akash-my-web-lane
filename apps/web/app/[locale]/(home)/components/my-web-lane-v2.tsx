@@ -2,20 +2,31 @@
 
 import { FormEvent, useState } from "react";
 
+type AuditItem = {
+  id: string;
+  title: string;
+  value: string | null;
+  score: number | null;
+};
+
 type AuditReport = {
-  wpUrl: string;
-  niche: string;
-  performance: {
-    score: number;
-    source: "pagespeed" | "heuristic";
+  url: string;
+  measuredAt: string;
+  evidenceSource: string;
+  strategy: string;
+  scores: {
+    performance: number | null;
+    accessibility: number | null;
+    bestPractices: number | null;
+    seo: number | null;
+  };
+  metrics: AuditItem[];
+  opportunities: AuditItem[];
+  cms: {
+    detected: string | null;
     note: string;
   };
-  plugins: string[];
-  pageCount: number;
-  painPoints: string[];
-  opportunities: string[];
-  competitorInsights: string;
-  analyzedAt: string;
+  nextDecision: string;
 };
 
 type ApiResponse = {
@@ -35,19 +46,13 @@ export function MyWebLaneV2() {
     event.preventDefault();
     setError(null);
     setReport(null);
-
-    const apiBase = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
-    if (!apiBase) {
-      setError("Audit API is not configured. Set NEXT_PUBLIC_API_URL for this deployment.");
-      return;
-    }
-
     setLoading(true);
+
     try {
-      const response = await fetch(`${apiBase}/intake`, {
+      const response = await fetch("/api/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ wpUrl: url }),
+        body: JSON.stringify({ url }),
       });
 
       const data = (await response.json()) as ApiResponse;
@@ -88,7 +93,7 @@ export function MyWebLaneV2() {
             Keep WordPress where it fits. Get out when it doesn&apos;t.
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-black/60 md:text-lg">
-            Give MyWebLane a site. It checks the current stack, performance evidence, plugin drag, and conversion issues, then tells you whether the least-risk move is to keep it, clean it up, or prepare a modern migration.
+            Give MyWebLane a site. It measures the mobile experience first, shows the evidence, and gives Akash a clean starting point for the keep, clean-up, or migration decision.
           </p>
         </div>
 
@@ -111,13 +116,13 @@ export function MyWebLaneV2() {
               disabled={loading}
               className="min-h-14 rounded-2xl bg-black px-6 font-semibold text-white transition hover:bg-black/85 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {loading ? "Auditing…" : "Audit this site"}
+              {loading ? "Measuring…" : "Audit this site"}
             </button>
           </div>
         </form>
 
         <p className="mt-3 text-xs leading-5 text-black/45">
-          Performance scores are identified as measured PageSpeed/Lighthouse data or as a labeled heuristic fallback. No guaranteed score or migration time is shown before real work exists to support it.
+          First-pass scores come from Google PageSpeed Insights / Lighthouse. MyWebLane does not invent a future score, guarantee a migration time, or guess the CMS from performance data.
         </p>
 
         {error ? (
@@ -131,42 +136,40 @@ export function MyWebLaneV2() {
           <section className="mt-8 grid gap-4">
             <div className="rounded-3xl border border-black/10 bg-white p-6">
               <div className="flex flex-col justify-between gap-5 md:flex-row md:items-start">
-                <div>
-                  <div className="text-xs font-semibold uppercase tracking-[0.16em] text-black/40">Audit result</div>
-                  <h2 className="mt-2 text-2xl font-semibold tracking-tight">{report.wpUrl}</h2>
-                  <p className="mt-1 text-sm text-black/50">Detected niche: {report.niche}</p>
+                <div className="min-w-0">
+                  <div className="text-xs font-semibold uppercase tracking-[0.16em] text-black/40">Measured audit</div>
+                  <h2 className="mt-2 break-all text-2xl font-semibold tracking-tight">{report.url}</h2>
+                  <p className="mt-1 text-sm text-black/50">
+                    {report.evidenceSource} · {report.strategy} · {new Date(report.measuredAt).toLocaleString()}
+                  </p>
                 </div>
-                <div className="rounded-2xl bg-[#f4f4f0] px-5 py-4 md:text-right">
-                  <div className="text-3xl font-semibold">{report.performance.score}</div>
-                  <div className="text-xs font-medium uppercase tracking-[0.13em] text-black/45">
-                    {report.performance.source === "pagespeed" ? "Measured performance" : "Estimated performance"}
-                  </div>
-                </div>
+                <ScoreCard label="Performance" score={report.scores.performance} emphasized />
               </div>
-              <p className="mt-5 rounded-2xl bg-[#f7f7f4] p-4 text-sm leading-6 text-black/55">
-                {report.performance.note}
-              </p>
+
+              <div className="mt-5 grid gap-2 sm:grid-cols-3">
+                <ScoreCard label="Accessibility" score={report.scores.accessibility} />
+                <ScoreCard label="Best practices" score={report.scores.bestPractices} />
+                <ScoreCard label="SEO" score={report.scores.seo} />
+              </div>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
-              <ResultList title="What is costing position" items={report.painPoints} />
-              <ResultList title="What could improve" items={report.opportunities} />
+              <AuditList title="Core mobile metrics" items={report.metrics} empty="No Lighthouse metric evidence returned." />
+              <AuditList title="First things to inspect" items={report.opportunities} empty="No scored Lighthouse opportunities returned." />
             </div>
 
             <div className="rounded-3xl border border-black/10 bg-white p-6">
-              <div className="text-xs font-semibold uppercase tracking-[0.16em] text-black/40">Detected stack evidence</div>
-              <p className="mt-3 text-sm leading-6 text-black/60">
-                {report.plugins.length ? report.plugins.join(" · ") : "No known WordPress plugin fingerprints were detected in the crawl."}
+              <div className="text-xs font-semibold uppercase tracking-[0.16em] text-black/40">Stack discipline</div>
+              <p className="mt-3 text-sm leading-6 text-black/60">{report.cms.note}</p>
+              <p className="mt-3 text-xs leading-5 text-black/40">
+                A deeper WordPress/plugin/content dependency crawl is a separate step because a performance result alone is not enough evidence to decide whether a migration is safe.
               </p>
-              <p className="mt-3 text-sm text-black/45">Pages observed: {report.pageCount}</p>
             </div>
 
             <div className="flex flex-col gap-3 rounded-3xl bg-black p-6 text-white md:flex-row md:items-center md:justify-between">
               <div>
                 <div className="text-xs font-semibold uppercase tracking-[0.16em] text-white/45">Next human decision</div>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-white/70">
-                  Review the evidence, then decide whether to keep WordPress, clean it up, or scope a migration. The audit does not start a rebuild on its own.
-                </p>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-white/70">{report.nextDecision}</p>
               </div>
               <a
                 href="https://wa.me/17025273771?text=Hi%20Akash%2C%20I%20ran%20the%20MyWebLane%20audit%20and%20want%20to%20review%20the%20result"
@@ -180,9 +183,9 @@ export function MyWebLaneV2() {
           </section>
         ) : (
           <div className="mt-10 grid gap-3 md:grid-cols-3">
-            <MiniCard title="1. Measure" body="Use real performance evidence when available." />
-            <MiniCard title="2. Diagnose" body="Separate CMS/plugin drag from actual business problems." />
-            <MiniCard title="3. Decide" body="Keep, clean up, or migrate only when evidence supports it." />
+            <MiniCard title="1. Measure" body="Start with real mobile Lighthouse evidence." />
+            <MiniCard title="2. Investigate" body="Only deepen the crawl when the evidence justifies it." />
+            <MiniCard title="3. Decide" body="Keep, clean up, or migrate with a human in the loop." />
           </div>
         )}
       </section>
@@ -190,12 +193,33 @@ export function MyWebLaneV2() {
   );
 }
 
-function ResultList({ title, items }: { title: string; items: string[] }) {
+function ScoreCard({ label, score, emphasized = false }: { label: string; score: number | null; emphasized?: boolean }) {
+  return (
+    <div className={`rounded-2xl ${emphasized ? "bg-[#f4f4f0] px-5 py-4 md:text-right" : "border border-black/8 bg-[#fafaf7] p-4"}`}>
+      <div className={emphasized ? "text-3xl font-semibold" : "text-2xl font-semibold"}>{score ?? "—"}</div>
+      <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.13em] text-black/45">{label}</div>
+    </div>
+  );
+}
+
+function AuditList({ title, items, empty }: { title: string; items: AuditItem[]; empty: string }) {
   return (
     <div className="rounded-3xl border border-black/10 bg-white p-6">
       <h3 className="text-sm font-semibold">{title}</h3>
       <ul className="mt-4 space-y-3 text-sm leading-6 text-black/60">
-        {items.length ? items.map((item) => <li key={item}>• {item}</li>) : <li>• No evidence returned.</li>}
+        {items.length ? (
+          items.map((item) => (
+            <li key={item.id} className="rounded-2xl bg-[#f7f7f4] p-3">
+              <div className="font-medium text-black/75">{item.title}</div>
+              <div className="mt-1 flex flex-wrap gap-x-3 text-xs text-black/45">
+                {item.value ? <span>{item.value}</span> : null}
+                {item.score !== null ? <span>Audit score {item.score}</span> : null}
+              </div>
+            </li>
+          ))
+        ) : (
+          <li>{empty}</li>
+        )}
       </ul>
     </div>
   );
