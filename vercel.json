@@ -1,21 +1,9 @@
 {
-  "version": 2,
-  "installCommand": "echo 'static site - no install needed'",
-  "buildCommand": "echo 'static site - no build needed'",
-  "outputDirectory": ".",
-  "framework": null,
-  "routes": [
-    { "src": "/", "dest": "/myweblane.html" },
-    { "src": "/(.*)", "dest": "/$1" }
-  ],
-  "headers": [
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "builds": [
     {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
-      ]
+      "src": "apps/web/package.json",
+      "use": "@vercel/next"
     }
   ]
 }
