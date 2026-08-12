@@ -11,11 +11,7 @@ const IntakeSchema = z.object({
 
 /**
  * POST /api/intake
- * Accepts a WordPress URL, runs SYNTHIA analysis, returns an audit report.
- *
- * Important: this endpoint does not invent a projected Lighthouse score or a
- * guaranteed migration time. Measured performance belongs to a real
- * PageSpeed/Lighthouse run; heuristic findings must be labeled as estimates.
+ * Accepts a WordPress URL, runs SYNTHIA analysis, returns an evidence-labelled audit report.
  */
 export async function POST(req: NextRequest) {
   let body: unknown;
@@ -49,10 +45,10 @@ export async function POST(req: NextRequest) {
       report: {
         wpUrl: report.wpUrl,
         niche: report.niche,
-        performanceEstimate: {
+        performance: {
           score: report.currentScore,
-          source: "heuristic",
-          label: "Estimated from site characteristics; not a measured Lighthouse result",
+          source: report.scoreSource,
+          note: report.scoreNote,
         },
         plugins: report.plugins,
         pageCount: report.pageCount,
