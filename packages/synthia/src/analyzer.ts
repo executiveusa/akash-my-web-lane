@@ -3,8 +3,8 @@
  * Step 1 of the migration pipeline:
  * - Crawls the WordPress site with Firecrawl
  * - Detects niche, plugins, content structure
- * - Scores current Lighthouse performance
- * - Researches competitors
+ * - Measures mobile performance with PageSpeed Insights when available
+ * - Falls back to an explicitly labeled heuristic when measurement is unavailable
  * - Returns a structured AnalysisReport
  */
 import { generateObject, generateText } from "ai";
@@ -22,15 +22,17 @@ export interface AnalysisReport {
     | "restaurant"
     | "education"
     | "other";
-  currentScore: number; // estimated Lighthouse 0-100
-  plugins: string[]; // detected WP plugins
+  currentScore: number;
+  scoreSource: "pagespeed" | "heuristic";
+  scoreNote: string;
+  plugins: string[];
   pageCount: number;
-  primaryColor: string; // extracted or guessed brand color
+  primaryColor: string;
   copyTone: "professional" | "casual" | "technical" | "friendly";
   competitorInsights: string;
-  contentSections: string[]; // main sections of the WP site
-  painPoints: string[]; // what's wrong with the current site
-  opportunities: string[]; // what could be dramatically better
+  contentSections: string[];
+  painPoints: string[];
+  opportunities: string[];
   clientName?: string;
   whatsapp?: string;
   analyzedAt: string;
@@ -47,7 +49,6 @@ export const AnalysisReportSchema = z.object({
     "education",
     "other",
   ]),
-  estimatedLighthouseScore: z.number().min(0).max(100),
   plugins: z.array(z.string()),
   pageCount: z.number(),
   primaryColor: z.string(),
@@ -57,7 +58,6 @@ export const AnalysisReportSchema = z.object({
   opportunities: z.array(z.string()).max(5),
 });
 
-/** Common WordPress plugin fingerprints detectable in HTML */
 const WP_PLUGIN_PATTERNS: Record<string, string> = {
   elementor: "elementor",
   woocommerce: "woocommerce",
@@ -71,41 +71,65 @@ const WP_PLUGIN_PATTERNS: Record<string, string> = {
   avada: "avada",
 };
 
-/** Detect WordPress plugins from page HTML */
 function detectPlugins(html: string): string[] {
   const found: string[] = [];
   for (const [plugin, fingerprint] of Object.entries(WP_PLUGIN_PATTERNS)) {
-    if (html.toLowerCase().includes(fingerprint)) {
-      found.push(plugin);
-    }
+    if (html.toLowerCase().includes(fingerprint)) found.push(plugin);
   }
-  // Check for generic WordPress markers
   if (html.includes("wp-content") || html.includes("wp-includes")) {
-    if (!found.includes("wordpress")) found.unshift("wordpress-core");
+    if (!found.includes("wordpress-core")) found.unshift("wordpress-core");
   }
   return found;
 }
 
-/** Estimate Lighthouse score from page characteristics */
-function estimateLighthouseScore(html: string, plugins: string[]): number {
-  let score = 70; // base
-  // Heavy plugins drag score down
+/** Internal triage only. Never present this as a measured Lighthouse result. */
+function estimatePerformanceHeuristic(html: string, plugins: string[]): number {
+  let score = 70;
   if (plugins.includes("elementor")) score -= 15;
   if (plugins.includes("revslider")) score -= 10;
   if (plugins.includes("divi")) score -= 12;
   if (plugins.includes("woocommerce")) score -= 8;
-  // Multiple plugins = more JS = slower
   score -= Math.min(plugins.length * 2, 20);
-  // Large HTML suggests bloat
   if (html.length > 100000) score -= 10;
   if (html.length > 200000) score -= 10;
   return Math.max(10, Math.min(score, 85));
 }
 
+type PageSpeedMeasurement = {
+  score: number;
+  fetchedAt?: string;
+};
+
 /**
- * Main analysis function — called as Step 1 of Absurd workflow
- * Uses Firecrawl API directly to avoid browser dependency
+ * Measure performance using Google's PageSpeed Insights / Lighthouse API.
+ * PAGESPEED_API_KEY is optional for low-volume use and recommended for quota.
  */
+async function measurePageSpeed(wpUrl: string): Promise<PageSpeedMeasurement | null> {
+  try {
+    const endpoint = new URL("https://www.googleapis.com/pagespeedonline/v5/runPagespeed");
+    endpoint.searchParams.set("url", wpUrl);
+    endpoint.searchParams.set("category", "performance");
+    endpoint.searchParams.set("strategy", "mobile");
+
+    const apiKey = process.env.PAGESPEED_API_KEY;
+    if (apiKey) endpoint.searchParams.set("key", apiKey);
+
+    const response = await fetch(endpoint.toString());
+    if (!response.ok) return null;
+
+    const data = (await response.json()) as any;
+    const rawScore = data?.lighthouseResult?.categories?.performance?.score;
+    if (typeof rawScore !== "number") return null;
+
+    return {
+      score: Math.round(rawScore * 100),
+      fetchedAt: data?.lighthouseResult?.fetchTime ?? data?.analysisUTCTimestamp,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function analyzeWordPressSite(
   wpUrl: string,
   clientName?: string,
@@ -114,7 +138,6 @@ export async function analyzeWordPressSite(
   const firecrawlKey = process.env.FIRECRAWL_API_KEY;
   if (!firecrawlKey) throw new Error("FIRECRAWL_API_KEY not set");
 
-  // Step 1: Crawl with Firecrawl
   let html = "";
   let markdown = "";
   let links: string[] = [];
@@ -137,22 +160,26 @@ export async function analyzeWordPressSite(
     html = crawlData?.data?.html ?? "";
     markdown = crawlData?.data?.markdown ?? "";
     links = crawlData?.data?.links ?? [];
-  } catch (e) {
-    // Graceful degradation — analyze from URL only
+  } catch {
     markdown = `Website: ${wpUrl}`;
   }
 
-  // Step 2: Detect plugins and score
   const plugins = detectPlugins(html);
-  const estimatedScore = estimateLighthouseScore(html, plugins);
   const pageCount = Math.min(links.length + 1, 50);
 
-  // Step 3: SYNTHIA fast model — classify niche + extract insights
+  const measuredPerformance = await measurePageSpeed(wpUrl);
+  const heuristicScore = estimatePerformanceHeuristic(html, plugins);
+  const currentScore = measuredPerformance?.score ?? heuristicScore;
+  const scoreSource: AnalysisReport["scoreSource"] = measuredPerformance ? "pagespeed" : "heuristic";
+  const scoreNote = measuredPerformance
+    ? `Measured with PageSpeed Insights mobile Lighthouse${measuredPerformance.fetchedAt ? ` at ${measuredPerformance.fetchedAt}` : ""}`
+    : "Estimated from detected site characteristics because a PageSpeed measurement was unavailable";
+
   const { object: analysis } = await generateObject({
     model: SYNTHIA_MODELS.fast,
     schema: AnalysisReportSchema,
     prompt: `
-You are SYNTHIA, a top-tier web design analyst. Analyze this WordPress site.
+You are SYNTHIA, a web design analyst. Analyze this site using only the supplied evidence.
 
 ${DESIGN_LAWS}
 
@@ -166,39 +193,39 @@ ${markdown.slice(0, 3000)}
 ${plugins.join(", ") || "None detected"}
 
 ## Instructions
-Analyze this site and return structured analysis:
-- Identify the niche and category (healthcare/legal/ecommerce/contractor/restaurant/education/other)
-- Estimate Lighthouse performance score (typically 20-55 for WordPress sites with page builders)
+Return structured analysis:
+- Identify the niche and category
 - Extract the main content sections
-- Identify 3-5 specific pain points (slow load, outdated design, poor mobile, plugin bloat etc)
-- Identify 3-5 opportunities for the rebuilt site
-- Determine brand primary color if visible in content
+- Identify 3-5 specific pain points supported by the supplied site evidence
+- Identify 3-5 opportunities for improvement
+- Determine brand primary color if visible
 - Assess copy tone
 
-Be specific. No generic responses. Reference actual site content when possible.
+Do not invent performance numbers, customer results, traffic, conversion rates, or business facts not present in the evidence.
 `,
   });
 
-  // Step 4: Quick competitor insight (fast model)
   let competitorInsights = "";
   try {
     const { text } = await generateText({
       model: SYNTHIA_MODELS.fast,
-      prompt: `In 2 sentences, what do the TOP performing ${analysis.niche} websites do better than most? Focus on design and UX patterns that convert.`,
+      prompt: `In 2 sentences, describe common high-performing design and UX patterns for ${analysis.niche} websites. State these as general patterns, not facts about ${wpUrl}.`,
       maxTokens: 150,
     });
     competitorInsights = text;
   } catch {
-    competitorInsights = `Top ${analysis.niche} sites prioritize speed, clear CTAs, and social proof.`;
+    competitorInsights = `Common ${analysis.niche} website patterns include clear calls to action, strong mobile usability, and fast page delivery.`;
   }
 
   return {
     wpUrl,
     niche: analysis.niche,
     nicheCategory: analysis.nicheCategory,
-    currentScore: analysis.estimatedLighthouseScore,
-    plugins: analysis.plugins,
-    pageCount: analysis.pageCount,
+    currentScore,
+    scoreSource,
+    scoreNote,
+    plugins: plugins.length ? plugins : analysis.plugins,
+    pageCount: links.length ? pageCount : analysis.pageCount,
     primaryColor: analysis.primaryColor,
     copyTone: analysis.copyTone,
     competitorInsights,
