@@ -1,5 +1,4 @@
 import { blog } from "@repo/cms";
-import { Feed } from "@repo/cms/components/feed";
 import { Image } from "@repo/cms/components/image";
 import { cn } from "@repo/design-system/lib/utils";
 import { getDictionary } from "@repo/internationalization";
@@ -20,13 +19,13 @@ export const generateMetadata = async ({
 }: BlogProps): Promise<Metadata> => {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
-
   return createMetadata(dictionary.web.blog.meta);
 };
 
 const BlogIndex = async ({ params }: BlogProps) => {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
+  const posts = (await blog.getPosts()) as any[];
 
   const jsonLd: WithContext<Blog> = {
     "@type": "Blog",
@@ -43,30 +42,27 @@ const BlogIndex = async ({ params }: BlogProps) => {
               {dictionary.web.blog.meta.title}
             </h4>
           </div>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            <Feed queries={[blog.postsQuery]}>
-              {async ([data]) => {
-                "use server";
 
-                if (!data.blog.posts.items.length) {
-                  return null;
-                }
-
-                return data.blog.posts.items.map((post, index) => (
-                  <Link
-                    className={cn(
-                      "flex cursor-pointer flex-col gap-4 hover:opacity-75",
-                      !index && "md:col-span-2"
-                    )}
-                    href={`/blog/${post._slug}`}
-                    key={post._slug}
-                  >
+          {posts.length ? (
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+              {posts.map((post, index) => (
+                <Link
+                  className={cn(
+                    "flex cursor-pointer flex-col gap-4 hover:opacity-75",
+                    !index && "md:col-span-2"
+                  )}
+                  href={`/blog/${post._slug}`}
+                  key={post._slug}
+                >
+                  {post.image?.url ? (
                     <Image
                       alt={post.image.alt ?? ""}
                       height={post.image.height}
                       src={post.image.url}
                       width={post.image.width}
                     />
+                  ) : null}
+                  {post.date ? (
                     <div className="flex flex-row items-center gap-4">
                       <p className="text-muted-foreground text-sm">
                         {new Date(post.date).toLocaleDateString("en-US", {
@@ -76,19 +72,21 @@ const BlogIndex = async ({ params }: BlogProps) => {
                         })}
                       </p>
                     </div>
-                    <div className="flex flex-col gap-2">
-                      <h3 className="max-w-3xl text-4xl tracking-tight">
-                        {post._title}
-                      </h3>
-                      <p className="max-w-3xl text-base text-muted-foreground">
-                        {post.description}
-                      </p>
-                    </div>
-                  </Link>
-                ));
-              }}
-            </Feed>
-          </div>
+                  ) : null}
+                  <div className="flex flex-col gap-2">
+                    <h3 className="max-w-3xl text-4xl tracking-tight">{post._title}</h3>
+                    {post.description ? (
+                      <p className="max-w-3xl text-base text-muted-foreground">{post.description}</p>
+                    ) : null}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-dashed p-8 text-sm text-muted-foreground">
+              No published posts are available from the current CMS adapter.
+            </div>
+          )}
         </div>
       </div>
     </>
