@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+const BOTANIC_SUPABASE_URL = "https://cyxdevcjycmffhmwxojh.supabase.co";
+
 const AuditRequestSchema = z.object({
   url: z.string().url(),
 });
@@ -68,13 +70,13 @@ function safeTarget(input: string): URL {
 }
 
 async function persistAudit(report: AuditReport): Promise<{ persisted: boolean; auditId: string | null }> {
-  // Vercel's Supabase integration commonly injects SUPABASE_URL / NEXT_PUBLIC_SUPABASE_URL.
-  // There is intentionally no database password or service-role secret in this app.
-  const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!supabaseUrl) {
-    console.warn("MyWebLane audit persistence skipped: Supabase URL is not configured");
-    return { persisted: false, auditId: null };
-  }
+  // Environment configuration always wins. Botanic Creations is the explicit
+  // temporary host and requires no database secret in this application because
+  // persistence is mediated by the rate-limited Edge Function.
+  const supabaseUrl =
+    process.env.SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    BOTANIC_SUPABASE_URL;
 
   try {
     const response = await fetch(`${supabaseUrl.replace(/\/$/, "")}/functions/v1/myweblane-audit-intake`, {
