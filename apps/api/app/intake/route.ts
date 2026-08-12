@@ -11,8 +11,11 @@ const IntakeSchema = z.object({
 
 /**
  * POST /api/intake
- * Accepts a WordPress URL, runs SYNTHIA analysis, returns audit report
- * This powers the "Run Free Audit" CTA on the landing page
+ * Accepts a WordPress URL, runs SYNTHIA analysis, returns an audit report.
+ *
+ * Important: this endpoint does not invent a projected Lighthouse score or a
+ * guaranteed migration time. Measured performance belongs to a real
+ * PageSpeed/Lighthouse run; heuristic findings must be labeled as estimates.
  */
 export async function POST(req: NextRequest) {
   let body: unknown;
@@ -35,7 +38,6 @@ export async function POST(req: NextRequest) {
   try {
     const report = await analyzeWordPressSite(wpUrl, clientName, whatsapp);
 
-    // Store in DB for Akash's dashboard (fire-and-forget)
     try {
       await storeAuditLead({ wpUrl, email, clientName, whatsapp, report });
     } catch (dbError) {
@@ -47,14 +49,18 @@ export async function POST(req: NextRequest) {
       report: {
         wpUrl: report.wpUrl,
         niche: report.niche,
-        currentScore: report.currentScore,
+        performanceEstimate: {
+          score: report.currentScore,
+          source: "heuristic",
+          label: "Estimated from site characteristics; not a measured Lighthouse result",
+        },
         plugins: report.plugins,
         pageCount: report.pageCount,
         painPoints: report.painPoints,
         opportunities: report.opportunities,
         competitorInsights: report.competitorInsights,
-        projectedScore: 96, // our guarantee
-        estimatedTime: "25 minutes",
+        migrationEstimate: null,
+        projectedPerformance: null,
         analyzedAt: report.analyzedAt,
       },
     });
@@ -63,8 +69,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         error: "Analysis failed",
-        message:
-          process.env.NODE_ENV === "development" ? error.message : undefined,
+        message: process.env.NODE_ENV === "development" ? error.message : undefined,
       },
       { status: 500 }
     );
@@ -86,7 +91,7 @@ async function storeAuditLead(data: {
   const sql = neon(DATABASE_URL);
   await sql`
     INSERT INTO audit_leads (wp_url, email, client_name, whatsapp, report, created_at)
-    VALUES (${data.wpUrl}, ${data.email ?? null}, ${data.clientName ?? null}, 
+    VALUES (${data.wpUrl}, ${data.email ?? null}, ${data.clientName ?? null},
             ${data.whatsapp ?? null}, ${JSON.stringify(data.report)}, NOW())
     ON CONFLICT (wp_url) DO UPDATE SET
       report = EXCLUDED.report,
