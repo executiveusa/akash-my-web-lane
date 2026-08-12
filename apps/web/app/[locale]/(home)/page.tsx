@@ -2,7 +2,7 @@ import { showBetaFeature } from "@repo/feature-flags";
 import { getDictionary } from "@repo/internationalization";
 import { createMetadata } from "@repo/seo/metadata";
 import type { Metadata } from "next";
-import { MyWebLaneLanding } from "./components/my-web-lane";
+import { MyWebLaneV2 } from "./components/my-web-lane-v2";
 
 type HomeProps = {
   params: Promise<{
@@ -12,23 +12,21 @@ type HomeProps = {
 
 export const generateMetadata = async ({ params }: HomeProps): Promise<Metadata> => {
   const { locale } = await params;
-  const dictionary = await getDictionary(locale);
+  await getDictionary(locale);
+
   return createMetadata({
-    title: "My Web Lane — Stop Losing to Slower Competitors",
-    description: "We migrate slow WordPress sites to blazing-fast Astro + Cloudflare Pages — in 25 minutes.",
+    title: "MyWebLane — Audit WordPress. Keep It or Move With Evidence.",
+    description:
+      "An evidence-first website audit from Akash Engine. Measure the current site, identify real drag, and decide whether to keep WordPress, clean it up, or prepare a modern migration.",
   });
 };
 
 const Home = async ({ params }: HomeProps) => {
   const { locale } = await params;
-  const dictionary = await getDictionary(locale);
-  const betaFeature = await showBetaFeature();
+  await getDictionary(locale);
+  await showBetaFeature();
 
-  return (
-    <>
-      <MyWebLaneLanding />
-    </>
-  );
+  return <MyWebLaneV2 />;
 };
 
 export default Home;
