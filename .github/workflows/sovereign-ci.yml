@@ -8,6 +8,8 @@ jobs:
   container:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      PAGESPEED_API_KEY: ${{ secrets.PAGESPEED_API_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,8 +23,6 @@ jobs:
             -t myweblane-ci .
 
       - name: Start packaged runtime
-        env:
-          PAGESPEED_API_KEY: ${{ secrets.PAGESPEED_API_KEY }}
         run: |
           docker run -d \
             --name myweblane-ci \
@@ -48,7 +48,13 @@ jobs:
           test "$status" = "422"
           grep -q 'Local/private targets are not allowed' /tmp/private.json
 
-      - name: Prove real external audit path
+      - name: Record external provider gate when key is absent
+        if: env.PAGESPEED_API_KEY == ''
+        run: |
+          echo '::notice title=MyWebLane external proof BLOCKED::PAGESPEED_API_KEY is not configured. Sovereign container and request-safety gates pass, but the real Google PageSpeed audit remains unproven in this run.'
+
+      - name: Prove real external PageSpeed audit
+        if: env.PAGESPEED_API_KEY != ''
         run: |
           ok=0
           for attempt in 1 2; do
