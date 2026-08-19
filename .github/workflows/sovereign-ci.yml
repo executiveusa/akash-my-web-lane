@@ -1,0 +1,80 @@
+name: Sovereign Container
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PAGESPEED_API_KEY: ${{ secrets.PAGESPEED_API_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build container
+        run: |
+          docker build \
+            --build-arg NEXT_PUBLIC_APP_URL=http://127.0.0.1:3000 \
+            --build-arg NEXT_PUBLIC_WEB_URL=http://127.0.0.1:3001 \
+            --build-arg NEXT_PUBLIC_MARKET=us \
+            -t myweblane-ci .
+
+      - name: Start packaged runtime
+        run: |
+          docker run -d \
+            --name myweblane-ci \
+            -p 3001:3001 \
+            -e PAGESPEED_API_KEY="$PAGESPEED_API_KEY" \
+            myweblane-ci
+          for i in $(seq 1 45); do
+            if curl --fail --silent http://127.0.0.1:3001/api/health >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          docker logs myweblane-ci
+          exit 1
+
+      - name: Prove health endpoint
+        run: curl --fail http://127.0.0.1:3001/api/health
+
+      - name: Prove private-target rejection
+        run: |
+          status=$(curl --silent --output /tmp/private.json --write-out '%{http_code}' \
+            -H 'content-type: application/json' \
+            -d '{"url":"http://127.0.0.1:9000"}' \
+            http://127.0.0.1:3001/api/audit)
+          test "$status" = "422"
+          grep -q 'Local/private targets are not allowed' /tmp/private.json
+
+      - name: Record external provider gate when key is absent
+        if: env.PAGESPEED_API_KEY == ''
+        run: |
+          echo '::notice title=MyWebLane external proof BLOCKED::PAGESPEED_API_KEY is not configured. Sovereign container and request-safety gates pass, but the real Google PageSpeed audit remains unproven in this run.'
+
+      - name: Prove real external PageSpeed audit
+        if: env.PAGESPEED_API_KEY != ''
+        run: |
+          ok=0
+          for attempt in 1 2; do
+            status=$(curl --max-time 70 --silent --output /tmp/audit.json --write-out '%{http_code}' \
+              -H 'content-type: application/json' \
+              -d '{"url":"https://example.com"}' \
+              http://127.0.0.1:3001/api/audit || true)
+            if [ "$status" = "200" ] && jq -e '.success == true and .report.evidenceSource == "Google PageSpeed Insights / Lighthouse" and .report.strategy == "mobile"' /tmp/audit.json >/dev/null; then
+              ok=1
+              break
+            fi
+            cat /tmp/audit.json || true
+            sleep 5
+          done
+          test "$ok" = "1"
+
+      - name: Runtime logs on failure
+        if: failure()
+        run: docker logs myweblane-ci || true
+
+      - name: Teardown
+        if: always()
+        run: docker rm -f myweblane-ci || true
