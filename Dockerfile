@@ -8,7 +8,11 @@ ENV PNPM_HOME=/pnpm \
     PORT=3001 \
     HOSTNAME=0.0.0.0
 
-RUN corepack enable && corepack prepare pnpm@10.18.1 --activate
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends openssl ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && corepack enable \
+    && corepack prepare pnpm@10.18.1 --activate
 
 WORKDIR /app
 COPY . .
@@ -17,14 +21,10 @@ RUN pnpm install --frozen-lockfile
 
 ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
 ARG NEXT_PUBLIC_WEB_URL=http://localhost:3001
-ARG NEXT_PUBLIC_API_URL
-ARG NEXT_PUBLIC_DOCS_URL
 ARG NEXT_PUBLIC_MARKET
 
 ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL \
     NEXT_PUBLIC_WEB_URL=$NEXT_PUBLIC_WEB_URL \
-    NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
-    NEXT_PUBLIC_DOCS_URL=$NEXT_PUBLIC_DOCS_URL \
     NEXT_PUBLIC_MARKET=$NEXT_PUBLIC_MARKET
 
 RUN pnpm --filter web build
