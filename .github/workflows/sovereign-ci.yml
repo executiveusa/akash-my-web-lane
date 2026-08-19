@@ -20,12 +20,55 @@ jobs:
             --build-arg NEXT_PUBLIC_MARKET=us \
             -t myweblane-ci .
 
-      - name: Smoke container
+      - name: Start packaged runtime
+        env:
+          PAGESPEED_API_KEY: ${{ secrets.PAGESPEED_API_KEY }}
         run: |
-          docker run -d --name myweblane-ci -p 3001:3001 myweblane-ci
-          trap 'docker rm -f myweblane-ci' EXIT
-          for i in $(seq 1 30); do
-            if curl --fail --silent http://127.0.0.1:3001/api/health >/dev/null; then break; fi
+          docker run -d \
+            --name myweblane-ci \
+            -p 3001:3001 \
+            -e PAGESPEED_API_KEY="$PAGESPEED_API_KEY" \
+            myweblane-ci
+          for i in $(seq 1 45); do
+            if curl --fail --silent http://127.0.0.1:3001/api/health >/dev/null; then exit 0; fi
             sleep 1
           done
-          curl --fail http://127.0.0.1:3001/api/health
+          docker logs myweblane-ci
+          exit 1
+
+      - name: Prove health endpoint
+        run: curl --fail http://127.0.0.1:3001/api/health
+
+      - name: Prove private-target rejection
+        run: |
+          status=$(curl --silent --output /tmp/private.json --write-out '%{http_code}' \
+            -H 'content-type: application/json' \
+            -d '{"url":"http://127.0.0.1:9000"}' \
+            http://127.0.0.1:3001/api/audit)
+          test "$status" = "422"
+          grep -q 'Local/private targets are not allowed' /tmp/private.json
+
+      - name: Prove real external audit path
+        run: |
+          ok=0
+          for attempt in 1 2; do
+            status=$(curl --max-time 70 --silent --output /tmp/audit.json --write-out '%{http_code}' \
+              -H 'content-type: application/json' \
+              -d '{"url":"https://example.com"}' \
+              http://127.0.0.1:3001/api/audit || true)
+            if [ "$status" = "200" ] && jq -e '.success == true and .report.evidenceSource == "Google PageSpeed Insights / Lighthouse" and .report.strategy == "mobile"' /tmp/audit.json >/dev/null; then
+              ok=1
+              break
+            fi
+            cat /tmp/audit.json || true
+            sleep 5
+          done
+          test "$ok" = "1"
+
+      - name: Runtime logs on failure
+        if: failure()
+        run: docker logs myweblane-ci || true
+
+      - name: Teardown
+        if: always()
+        run: docker rm -f myweblane-ci || true
