@@ -54,9 +54,11 @@ export const Header = ({ dictionary }: HeaderProps) => {
   }
 
   const [isOpen, setOpen] = useState(false);
+  const closeMenu = () => setOpen(false);
+
   return (
-    <header className="sticky top-0 left-0 z-40 w-full border-b bg-background">
-      <div className="container relative mx-auto flex min-h-20 flex-row items-center gap-4 lg:grid lg:grid-cols-3">
+    <header className="sticky top-0 left-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="container relative mx-auto flex min-h-16 items-center gap-3 px-4 sm:min-h-20 sm:px-6 lg:grid lg:grid-cols-3">
         <div className="hidden flex-row items-center justify-start gap-4 lg:flex">
           <NavigationMenu className="flex items-start justify-start">
             <NavigationMenuList className="flex flex-row justify-start gap-4">
@@ -109,9 +111,15 @@ export const Header = ({ dictionary }: HeaderProps) => {
             </NavigationMenuList>
           </NavigationMenu>
         </div>
-        <div className="flex items-center gap-2 lg:justify-center">
+
+        <Link
+          href="/"
+          onClick={closeMenu}
+          className="flex min-w-0 flex-1 items-center gap-2 lg:justify-center"
+          aria-label="Akash Engine home"
+        >
           <svg
-            className="h-5 w-5 text-[#c9a84c]"
+            className="h-5 w-5 shrink-0 text-[#c9a84c]"
             fill="none"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
@@ -122,20 +130,19 @@ export const Header = ({ dictionary }: HeaderProps) => {
               fill="currentColor"
             />
           </svg>
-          <p className="whitespace-nowrap font-semibold text-[#c9a84c]">Akash Engine™</p>
-        </div>
-        <div className="flex w-full justify-end gap-4">
-          <Button asChild className="hidden md:inline" variant="ghost">
+          <p className="truncate whitespace-nowrap font-semibold text-[#c9a84c]">
+            Akash Engine™
+          </p>
+        </Link>
+
+        <div className="hidden w-full justify-end gap-3 md:flex">
+          <Button asChild variant="ghost">
             <Link href="/contact">{dictionary.web.header.contact}</Link>
           </Button>
-          <div className="hidden border-r md:inline" />
-          <div className="hidden md:inline">
-            <LanguageSwitcher />
-          </div>
-          <div className="hidden md:inline">
-            <ModeToggle />
-          </div>
-          <Button asChild className="hidden md:inline" variant="outline">
+          <div className="border-r" />
+          <LanguageSwitcher />
+          <ModeToggle />
+          <Button asChild variant="outline">
             <Link href={`${env.NEXT_PUBLIC_APP_URL}/sign-in`}>
               {dictionary.web.header.signIn}
             </Link>
@@ -146,52 +153,79 @@ export const Header = ({ dictionary }: HeaderProps) => {
             </Link>
           </Button>
         </div>
-        <div className="flex w-12 shrink items-end justify-end lg:hidden">
-          <Button onClick={() => setOpen(!isOpen)} variant="ghost">
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
-          {isOpen && (
-            <div className="container absolute top-20 right-0 flex w-full flex-col gap-8 border-t bg-background py-4 shadow-lg">
-              {navigationItems.map((item) => (
-                <div key={item.title}>
-                  <div className="flex flex-col gap-2">
-                    {item.href ? (
-                      <Link
-                        className="flex items-center justify-between"
-                        href={item.href}
-                        rel={
-                          item.href.startsWith("http")
-                            ? "noopener noreferrer"
-                            : undefined
-                        }
-                        target={
-                          item.href.startsWith("http") ? "_blank" : undefined
-                        }
-                      >
-                        <span className="text-lg">{item.title}</span>
-                        <MoveRight className="h-4 w-4 stroke-1 text-muted-foreground" />
-                      </Link>
-                    ) : (
-                      <p className="text-lg">{item.title}</p>
-                    )}
-                    {item.items?.map((subItem) => (
-                      <Link
-                        className="flex items-center justify-between"
-                        href={subItem.href}
-                        key={subItem.title}
-                      >
-                        <span className="text-muted-foreground">
-                          {subItem.title}
-                        </span>
-                        <MoveRight className="h-4 w-4 stroke-1" />
-                      </Link>
-                    ))}
-                  </div>
+
+        <Button
+          onClick={() => setOpen(!isOpen)}
+          variant="ghost"
+          size="icon"
+          className="h-11 w-11 shrink-0 md:hidden"
+          aria-expanded={isOpen}
+          aria-controls="mobile-site-navigation"
+          aria-label={isOpen ? "Close navigation" : "Open navigation"}
+        >
+          {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </Button>
+
+        {isOpen && (
+          <div
+            id="mobile-site-navigation"
+            className="absolute top-16 right-0 left-0 flex max-h-[calc(100dvh-4rem)] w-full flex-col gap-5 overflow-y-auto border-t bg-background px-4 py-5 shadow-lg sm:top-20 sm:px-6 md:hidden"
+          >
+            {navigationItems.map((item) => (
+              <div key={item.title}>
+                <div className="flex flex-col gap-2">
+                  {item.href ? (
+                    <Link
+                      className="flex min-h-11 items-center justify-between rounded-md px-2"
+                      href={item.href}
+                      onClick={closeMenu}
+                      rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                      target={item.href.startsWith("http") ? "_blank" : undefined}
+                    >
+                      <span className="text-lg">{item.title}</span>
+                      <MoveRight className="h-4 w-4 stroke-1 text-muted-foreground" />
+                    </Link>
+                  ) : (
+                    <p className="px-2 text-lg font-medium">{item.title}</p>
+                  )}
+                  {item.items?.map((subItem) => (
+                    <Link
+                      className="flex min-h-11 items-center justify-between rounded-md px-2"
+                      href={subItem.href}
+                      key={subItem.title}
+                      onClick={closeMenu}
+                    >
+                      <span className="text-muted-foreground">{subItem.title}</span>
+                      <MoveRight className="h-4 w-4 stroke-1" />
+                    </Link>
+                  ))}
                 </div>
-              ))}
+              </div>
+            ))}
+
+            <div className="grid gap-2 border-t pt-4">
+              <Button asChild variant="ghost" className="min-h-11 justify-start">
+                <Link href="/contact" onClick={closeMenu}>
+                  {dictionary.web.header.contact}
+                </Link>
+              </Button>
+              <div className="flex min-h-11 items-center justify-between gap-3 px-2">
+                <LanguageSwitcher />
+                <ModeToggle />
+              </div>
+              <Button asChild variant="outline" className="min-h-11">
+                <Link href={`${env.NEXT_PUBLIC_APP_URL}/sign-in`} onClick={closeMenu}>
+                  {dictionary.web.header.signIn}
+                </Link>
+              </Button>
+              <Button asChild className="min-h-11">
+                <Link href={`${env.NEXT_PUBLIC_APP_URL}/sign-up`} onClick={closeMenu}>
+                  {dictionary.web.header.signUp}
+                </Link>
+              </Button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </header>
   );
