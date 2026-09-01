@@ -1,0 +1,65 @@
+name: Site quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: myweblane-site-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install pnpm
+        run: npm install --global pnpm@10.18.1
+
+      - name: Anti-slop copy guard
+        run: node scripts/quality/no-slop.mjs
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck public web app
+        run: pnpm --filter web typecheck
+
+      - name: Production build
+        run: pnpm --filter web build
+
+      - name: Start built app
+        run: |
+          pnpm --filter web exec next start -p 3001 > /tmp/myweblane-next.log 2>&1 &
+          echo $! > /tmp/myweblane-next.pid
+
+      - name: Wait for app
+        run: |
+          for i in {1..30}; do
+            if curl --fail --silent --output /dev/null http://127.0.0.1:3001/en; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/myweblane-next.log
+          exit 1
+
+      - name: Smoke public routes
+        run: |
+          curl --fail --silent --show-error --output /dev/null http://127.0.0.1:3001/en
+          curl --fail --silent --show-error --output /dev/null http://127.0.0.1:3001/en/contact
+          status=$(curl --silent --output /dev/null --write-out "%{http_code}" http://127.0.0.1:3001/en/pricing)
+          case "$status" in
+            200|301|302|307|308) ;;
+            *) echo "Unexpected /en/pricing status: $status"; cat /tmp/myweblane-next.log; exit 1 ;;
+          esac
