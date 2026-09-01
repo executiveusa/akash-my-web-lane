@@ -89,7 +89,11 @@ export function MyWebLaneV2() {
           </p>
         </div>
 
-        <form onSubmit={runAudit} className="mt-12 border-y border-black/15 py-4 dark:border-white/15 md:mt-16">
+        <form
+          onSubmit={runAudit}
+          aria-busy={loading}
+          className="mt-12 border-y border-black/15 py-4 dark:border-white/15 md:mt-16"
+        >
           <label htmlFor="site-url" className="mb-2 block text-sm font-medium">
             Website to measure
           </label>
@@ -102,30 +106,39 @@ export function MyWebLaneV2() {
               placeholder="https://your-site.com"
               required
               inputMode="url"
-              className="min-h-14 w-full border border-black/15 bg-white px-4 text-base outline-none transition focus:border-black dark:border-white/20 dark:bg-black dark:focus:border-white"
+              autoComplete="url"
+              aria-describedby="audit-evidence-note audit-status"
+              className="min-h-14 w-full border border-black/15 bg-white px-4 text-base outline-none transition focus-visible:border-black focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 dark:border-white/20 dark:bg-black dark:focus-visible:border-white dark:focus-visible:ring-white dark:focus-visible:ring-offset-[#111]"
             />
             <button
               type="submit"
               disabled={loading}
-              className="min-h-14 bg-black px-7 font-semibold text-white transition active:scale-[0.99] hover:bg-black/85 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-white/90"
+              className="min-h-14 bg-black px-7 font-semibold text-white transition active:scale-[0.99] hover:bg-black/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-white/90 dark:focus-visible:ring-white dark:focus-visible:ring-offset-[#111] motion-reduce:transform-none motion-reduce:transition-none"
             >
               {loading ? "Measuring mobile…" : "Run the mobile check"}
             </button>
           </div>
-          <p className="mt-3 text-xs leading-5 text-black/45 dark:text-white/45">
+          <p id="audit-evidence-note" className="mt-3 text-xs leading-5 text-black/45 dark:text-white/45">
             Real PageSpeed Insights / Lighthouse evidence. No invented future score. No automatic migration recommendation.
+          </p>
+          <p id="audit-status" className="sr-only" aria-live="polite">
+            {loading ? "Mobile audit is running." : report ? "Mobile audit completed." : error ? "Mobile audit failed." : "Ready to run a mobile audit."}
           </p>
         </form>
 
         {error ? (
-          <section className="mt-7 border-l-4 border-[#9f2d23] bg-white p-5 text-sm text-[#7d241c] dark:bg-black dark:text-[#ff9a90]">
+          <section role="alert" className="mt-7 border-l-4 border-[#9f2d23] bg-white p-5 text-sm text-[#7d241c] dark:bg-black dark:text-[#ff9a90]">
             <div className="font-semibold">The measurement did not complete.</div>
             <p className="mt-1">{error}</p>
             <p className="mt-2 text-black/50 dark:text-white/50">Nothing has been inferred from a failed check. Try again later or review the site with Akash manually.</p>
           </section>
         ) : null}
 
-        {report ? <AuditResults report={report} /> : null}
+        {report ? (
+          <div aria-live="polite" aria-atomic="true">
+            <AuditResults report={report} />
+          </div>
+        ) : null}
       </section>
 
       {!report ? (
@@ -171,11 +184,11 @@ export function MyWebLaneV2() {
 
 function AuditResults({ report }: { report: AuditReport }) {
   return (
-    <section className="mt-10 border-t border-black/15 pt-8 dark:border-white/15">
+    <section className="mt-10 border-t border-black/15 pt-8 dark:border-white/15" aria-labelledby="audit-results-heading">
       <div className="grid gap-8 lg:grid-cols-[1fr_280px] lg:items-start">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-black/40 dark:text-white/40">Measured audit</p>
-          <h2 className="mt-2 break-all text-2xl font-semibold tracking-tight">{report.url}</h2>
+          <h2 id="audit-results-heading" className="mt-2 break-all text-2xl font-semibold tracking-tight">{report.url}</h2>
           <p className="mt-2 text-sm text-black/50 dark:text-white/50">
             {report.evidenceSource} · {report.strategy} · {new Date(report.measuredAt).toLocaleString()}
           </p>
@@ -204,7 +217,7 @@ function AuditResults({ report }: { report: AuditReport }) {
           href="https://wa.me/17025273771?text=Hi%20Akash%2C%20I%20ran%20the%20MyWebLane%20audit%20and%20want%20to%20review%20the%20result"
           target="_blank"
           rel="noreferrer"
-          className="inline-flex min-h-12 items-center justify-center bg-black px-6 text-sm font-semibold text-white dark:bg-white dark:text-black"
+          className="inline-flex min-h-12 items-center justify-center bg-black px-6 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 dark:bg-white dark:text-black dark:focus-visible:ring-white dark:focus-visible:ring-offset-[#111]"
         >
           Review the evidence
         </a>

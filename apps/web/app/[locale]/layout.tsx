@@ -23,15 +23,23 @@ const RootLayout = async ({ children, params }: RootLayoutProperties) => {
 
   return (
     <html
-      className={cn(fonts, "scroll-smooth")}
+      className={cn(fonts, "scroll-smooth motion-reduce:scroll-auto")}
       lang={locale}
       suppressHydrationWarning
     >
       <body>
         <AnalyticsProvider>
           <DesignSystemProvider>
+            <a
+              href="#page-content"
+              className="fixed left-4 top-4 z-[1000] -translate-y-24 bg-background px-4 py-3 text-sm font-semibold text-foreground shadow-lg transition focus:translate-y-0 focus:outline-none focus:ring-2 focus:ring-foreground motion-reduce:transition-none"
+            >
+              Skip to content
+            </a>
             <Header dictionary={dictionary} />
-            {children}
+            <div id="page-content" tabIndex={-1}>
+              {children}
+            </div>
             <Footer />
           </DesignSystemProvider>
           <Toolbar />
