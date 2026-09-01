@@ -1,94 +1,33 @@
 import { legal } from "@repo/cms";
 import { Status } from "@repo/observability/status";
 import Link from "next/link";
-import { env } from "@/env";
 
 export const Footer = async () => {
   const legalPosts = (await legal.getPosts()) as any[];
 
-  const navigationItems = [
-    {
-      title: "Home",
-      href: "/",
-      description: "",
-    },
-    {
-      title: "Pages",
-      description: "Evidence-first website decisions.",
-      items: [
-        {
-          title: "Blog",
-          href: "/blog",
-        },
-      ],
-    },
-    {
-      title: "Legal",
-      description: "Published legal pages.",
-      items: legalPosts.map((post) => ({
-        title: post._title,
-        href: `/legal/${post._slug}`,
-      })),
-    },
-  ];
-
-  if (env.NEXT_PUBLIC_DOCS_URL) {
-    navigationItems.at(1)?.items?.push({
-      title: "Docs",
-      href: env.NEXT_PUBLIC_DOCS_URL,
-    });
-  }
-
   return (
-    <section className="dark border-foreground/10 border-t">
-      <div className="w-full bg-background py-20 text-foreground lg:py-40">
-        <div className="container mx-auto">
-          <div className="grid items-center gap-10 lg:grid-cols-2">
-            <div className="flex flex-col items-start gap-8">
-              <div className="flex flex-col gap-2">
-                <h2 className="max-w-xl text-left font-regular text-3xl tracking-tighter md:text-5xl">
-                  Akash Engine™ / MyWebLane
-                </h2>
-                <p className="max-w-lg text-left text-foreground/75 text-lg leading-relaxed tracking-tight">
-                  Measure the current site, preserve what matters, and choose the least-risk path: keep it, clean it up, or migrate it.
-                </p>
-              </div>
-              <Status />
-            </div>
-            <div className="grid items-start gap-10 lg:grid-cols-3">
-              {navigationItems.map((item) => (
-                <div className="flex flex-col items-start gap-1 text-base" key={item.title}>
-                  <div className="flex flex-col gap-2">
-                    {item.href ? (
-                      <Link
-                        className="flex items-center justify-between"
-                        href={item.href}
-                        rel={item.href.includes("http") ? "noopener noreferrer" : undefined}
-                        target={item.href.includes("http") ? "_blank" : undefined}
-                      >
-                        <span className="text-xl">{item.title}</span>
-                      </Link>
-                    ) : (
-                      <p className="text-xl">{item.title}</p>
-                    )}
-                    {item.items?.map((subItem) => (
-                      <Link
-                        className="flex items-center justify-between"
-                        href={subItem.href}
-                        key={subItem.title}
-                        rel={subItem.href.includes("http") ? "noopener noreferrer" : undefined}
-                        target={subItem.href.includes("http") ? "_blank" : undefined}
-                      >
-                        <span className="text-foreground/75">{subItem.title}</span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+    <footer className="border-t border-black/10 bg-[#111] text-white">
+      <div className="mx-auto max-w-6xl px-5 py-12 sm:px-6 md:py-16">
+        <div className="grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
+          <div>
+            <p className="text-xl font-semibold tracking-[-0.025em]">MyWebLane</p>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-white/55">
+              Measure first. Preserve what works. Change only what the evidence can justify.
+            </p>
+            <div className="mt-5"><Status /></div>
           </div>
+
+          <nav className="flex flex-wrap gap-x-5 gap-y-3 text-sm text-white/60" aria-label="Footer navigation">
+            <Link href="/">Home</Link>
+            <Link href="/contact">Talk to Akash</Link>
+            {legalPosts.map((post) => (
+              <Link key={post._slug} href={`/legal/${post._slug}`}>
+                {post._title}
+              </Link>
+            ))}
+          </nav>
         </div>
       </div>
-    </section>
+    </footer>
   );
 };
