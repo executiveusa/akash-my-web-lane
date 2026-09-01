@@ -32,6 +32,15 @@ type AuditReport = {
   nextDecision: string;
 };
 
+type LighthousePayload = {
+  lighthouseResult?: {
+    finalDisplayedUrl?: string;
+    fetchTime?: string;
+    categories?: Record<string, { score?: number | null }>;
+    audits?: Record<string, unknown>;
+  };
+};
+
 function scoreToPercent(score: unknown): number | null {
   return typeof score === "number" ? Math.round(score * 100) : null;
 }
@@ -70,9 +79,6 @@ function safeTarget(input: string): URL {
 }
 
 async function persistAudit(report: AuditReport): Promise<{ persisted: boolean; auditId: string | null }> {
-  // Environment configuration always wins. Botanic Creations is the explicit
-  // temporary host and requires no database secret in this application because
-  // persistence is mediated by the rate-limited Edge Function.
   const supabaseUrl =
     process.env.SUPABASE_URL ||
     process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -88,7 +94,7 @@ async function persistAudit(report: AuditReport): Promise<{ persisted: boolean; 
         evidence_source: report.evidenceSource,
         measured_at: report.measuredAt,
       }),
-      signal: AbortSignal.timeout(10_000),
+      signal: AbortSignal.timeout(5_000),
       cache: "no-store",
     });
 
@@ -151,17 +157,30 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("PageSpeed audit failed", response.status, errorText.slice(0, 500));
+
+      if (response.status === 429) {
+        return NextResponse.json(
+          {
+            error: "Google PageSpeed has reached its measurement quota. Nothing was inferred from the failed check. Try again later or review the site manually with Akash.",
+          },
+          {
+            status: 503,
+            headers: { "Retry-After": "3600" },
+          }
+        );
+      }
+
       return NextResponse.json(
-        { error: "PageSpeed could not measure this site right now" },
+        { error: "Google PageSpeed could not measure this site right now. Nothing was inferred from the failed check." },
         { status: 502 }
       );
     }
 
-    const data = (await response.json()) as any;
-    const lighthouse = data?.lighthouseResult;
+    const data = (await response.json()) as LighthousePayload;
+    const lighthouse = data.lighthouseResult;
     if (!lighthouse) {
       return NextResponse.json(
-        { error: "PageSpeed returned no Lighthouse result" },
+        { error: "Google PageSpeed returned no Lighthouse result. Nothing was inferred." },
         { status: 502 }
       );
     }
@@ -229,6 +248,17 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "Audit request failed";
     console.error("MyWebLane audit error", message);
-    return NextResponse.json({ error: "Audit request failed" }, { status: 500 });
+
+    if (error instanceof Error && error.name === "TimeoutError") {
+      return NextResponse.json(
+        { error: "The measurement timed out before Google PageSpeed returned evidence. Nothing was inferred. Try again later." },
+        { status: 504 }
+      );
+    }
+
+    return NextResponse.json(
+      { error: "The audit request failed before evidence was returned. Nothing was inferred." },
+      { status: 500 }
+    );
   }
 }
