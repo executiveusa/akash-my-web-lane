@@ -1,32 +1,24 @@
-import { showBetaFeature } from "@repo/feature-flags";
-import { getDictionary } from "@repo/internationalization";
-import { createMetadata } from "@repo/seo/metadata";
 import type { Metadata } from "next";
 import { MyWebLaneV2 } from "./components/my-web-lane-v2";
 
-type HomeProps = {
-  params: Promise<{
-    locale: string;
-  }>;
-};
-
-export const generateMetadata = async ({ params }: HomeProps): Promise<Metadata> => {
-  const { locale } = await params;
-  await getDictionary(locale);
-
-  return createMetadata({
-    title: "MyWebLane — Audit WordPress. Keep It or Move With Evidence.",
+export const metadata: Metadata = {
+  title: "MyWebLane — Diagnose Before You Rebuild | Akash Engine",
+  description:
+    "A mobile-first website diagnostic from Akash Engine. Measure real Lighthouse evidence before deciding to keep, clean up, or migrate a site.",
+  openGraph: {
+    title: "MyWebLane — Diagnose Before You Rebuild | Akash Engine",
     description:
-      "An evidence-first website audit from Akash Engine. Measure the current site, identify real drag, and decide whether to keep WordPress, clean it up, or prepare a modern migration.",
-  });
+      "Measure the current site first. Keep what works and change only what the evidence can justify.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MyWebLane — Diagnose Before You Rebuild | Akash Engine",
+    description:
+      "Measure the current site first. Keep what works and change only what the evidence can justify.",
+  },
 };
 
-const Home = async ({ params }: HomeProps) => {
-  const { locale } = await params;
-  await getDictionary(locale);
-  await showBetaFeature();
-
+export default function Home() {
   return <MyWebLaneV2 />;
-};
-
-export default Home;
+}
