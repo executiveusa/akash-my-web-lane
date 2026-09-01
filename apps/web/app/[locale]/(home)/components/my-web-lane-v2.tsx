@@ -36,6 +36,12 @@ type ApiResponse = {
   message?: string;
 };
 
+const process = [
+  ["01", "Measure first", "Run a real mobile Lighthouse check before anyone recommends a redesign or migration."],
+  ["02", "Separate symptoms from causes", "Performance evidence can show where to investigate. It cannot honestly tell us which CMS decision to make by itself."],
+  ["03", "Make the smallest defensible move", "Keep WordPress, clean it up, or plan a migration only after the evidence supports that decision."],
+];
+
 export function MyWebLaneV2() {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -69,167 +75,172 @@ export function MyWebLaneV2() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f5f1] text-[#171717]">
-      <nav className="flex h-16 items-center justify-between border-b border-black/10 px-5 md:px-10">
-        <div className="font-semibold tracking-tight">
-          Akash Engine <span className="text-black/35">/</span> MyWebLane
-        </div>
-        <a
-          href="https://wa.me/17025273771?text=Hi%20Akash%2C%20I%27d%20like%20a%20MyWebLane%20site%20audit"
-          target="_blank"
-          rel="noreferrer"
-          className="rounded-full border border-black/15 bg-white px-4 py-2 text-sm font-medium hover:border-black/30"
-        >
-          Talk to Akash
-        </a>
-      </nav>
-
-      <section className="mx-auto flex min-h-[calc(100vh-64px)] max-w-4xl flex-col justify-center px-5 py-16 md:px-8">
-        <div className="mb-8 max-w-3xl">
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-red-600">
-            Web lane
+    <main className="min-h-screen bg-[#f3f1ea] text-[#181817] dark:bg-[#111] dark:text-white">
+      <section className="mx-auto max-w-6xl px-5 pb-16 pt-14 sm:px-6 md:pb-24 md:pt-20">
+        <div className="grid gap-10 lg:grid-cols-[1fr_0.72fr] lg:items-end">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#9f2d23] dark:text-[#e86a5c]">Website diagnosis before website sales</p>
+            <h1 className="mt-5 max-w-4xl text-[clamp(3rem,8vw,6.6rem)] font-semibold leading-[0.88] tracking-[-0.06em]">
+              Before you rebuild the site, find out what is actually wrong.
+            </h1>
           </div>
-          <h1 className="text-4xl font-semibold leading-[1.02] tracking-[-0.045em] md:text-6xl">
-            Keep WordPress where it fits. Get out when it doesn&apos;t.
-          </h1>
-          <p className="mt-5 max-w-2xl text-base leading-7 text-black/60 md:text-lg">
-            Give MyWebLane a site. It measures the mobile experience first, shows the evidence, and gives Akash a clean starting point for the keep, clean-up, or migration decision.
+          <p className="max-w-xl text-base leading-7 text-black/60 dark:text-white/60 md:text-lg">
+            MyWebLane gives Akash and the client a shared evidence base before anyone sells a migration. Start with the mobile experience. Keep what works. Investigate what does not.
           </p>
         </div>
 
-        <form onSubmit={runAudit} className="rounded-3xl border border-black/10 bg-white p-3 shadow-[0_18px_60px_rgba(0,0,0,.06)]">
-          <label htmlFor="site-url" className="sr-only">
-            Website URL
+        <form onSubmit={runAudit} className="mt-12 border-y border-black/15 py-4 dark:border-white/15 md:mt-16">
+          <label htmlFor="site-url" className="mb-2 block text-sm font-medium">
+            Website to measure
           </label>
-          <div className="flex flex-col gap-2 md:flex-row">
+          <div className="grid gap-3 md:grid-cols-[1fr_auto]">
             <input
               id="site-url"
               type="url"
               value={url}
               onChange={(event) => setUrl(event.target.value)}
-              placeholder="https://your-wordpress-site.com"
+              placeholder="https://your-site.com"
               required
-              className="min-h-14 flex-1 rounded-2xl border border-transparent bg-[#f4f4f0] px-4 outline-none transition focus:border-black/20 focus:bg-white"
+              inputMode="url"
+              className="min-h-14 w-full border border-black/15 bg-white px-4 text-base outline-none transition focus:border-black dark:border-white/20 dark:bg-black dark:focus:border-white"
             />
             <button
               type="submit"
               disabled={loading}
-              className="min-h-14 rounded-2xl bg-black px-6 font-semibold text-white transition hover:bg-black/85 disabled:cursor-not-allowed disabled:opacity-50"
+              className="min-h-14 bg-black px-7 font-semibold text-white transition active:scale-[0.99] hover:bg-black/85 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-white/90"
             >
-              {loading ? "Measuring…" : "Audit this site"}
+              {loading ? "Measuring mobile…" : "Run the mobile check"}
             </button>
           </div>
+          <p className="mt-3 text-xs leading-5 text-black/45 dark:text-white/45">
+            Real PageSpeed Insights / Lighthouse evidence. No invented future score. No automatic migration recommendation.
+          </p>
         </form>
 
-        <p className="mt-3 text-xs leading-5 text-black/45">
-          First-pass scores come from Google PageSpeed Insights / Lighthouse. MyWebLane does not invent a future score, guarantee a migration time, or guess the CMS from performance data.
-        </p>
-
         {error ? (
-          <section className="mt-7 rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-800">
-            <div className="font-semibold">Audit could not run</div>
+          <section className="mt-7 border-l-4 border-[#9f2d23] bg-white p-5 text-sm text-[#7d241c] dark:bg-black dark:text-[#ff9a90]">
+            <div className="font-semibold">The measurement did not complete.</div>
             <p className="mt-1">{error}</p>
+            <p className="mt-2 text-black/50 dark:text-white/50">Nothing has been inferred from a failed check. Try again later or review the site with Akash manually.</p>
           </section>
         ) : null}
 
-        {report ? (
-          <section className="mt-8 grid gap-4">
-            <div className="rounded-3xl border border-black/10 bg-white p-6">
-              <div className="flex flex-col justify-between gap-5 md:flex-row md:items-start">
-                <div className="min-w-0">
-                  <div className="text-xs font-semibold uppercase tracking-[0.16em] text-black/40">Measured audit</div>
-                  <h2 className="mt-2 break-all text-2xl font-semibold tracking-tight">{report.url}</h2>
-                  <p className="mt-1 text-sm text-black/50">
-                    {report.evidenceSource} · {report.strategy} · {new Date(report.measuredAt).toLocaleString()}
-                  </p>
+        {report ? <AuditResults report={report} /> : null}
+      </section>
+
+      {!report ? (
+        <>
+          <section id="how-it-works" className="border-t border-black/10 bg-[#e7e3d8] dark:border-white/10 dark:bg-[#181818]">
+            <div className="mx-auto max-w-6xl px-5 py-16 sm:px-6 md:py-24">
+              <div className="grid gap-10 lg:grid-cols-[0.65fr_1.35fr]">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-black/45 dark:text-white/45">The rule</p>
+                  <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] md:text-5xl">Do not migrate on vibes.</h2>
                 </div>
-                <ScoreCard label="Performance" score={report.scores.performance} emphasized />
+                <div className="divide-y divide-black/12 border-y border-black/12 dark:divide-white/12 dark:border-white/12">
+                  {process.map(([number, title, body]) => (
+                    <div key={number} className="grid gap-3 py-6 sm:grid-cols-[64px_180px_1fr] sm:items-start">
+                      <div className="font-mono text-xs text-black/35 dark:text-white/35">{number}</div>
+                      <h3 className="font-semibold">{title}</h3>
+                      <p className="text-sm leading-6 text-black/55 dark:text-white/55">{body}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-
-              <div className="mt-5 grid gap-2 sm:grid-cols-3">
-                <ScoreCard label="Accessibility" score={report.scores.accessibility} />
-                <ScoreCard label="Best practices" score={report.scores.bestPractices} />
-                <ScoreCard label="SEO" score={report.scores.seo} />
-              </div>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <AuditList title="Core mobile metrics" items={report.metrics} empty="No Lighthouse metric evidence returned." />
-              <AuditList title="First things to inspect" items={report.opportunities} empty="No scored Lighthouse opportunities returned." />
-            </div>
-
-            <div className="rounded-3xl border border-black/10 bg-white p-6">
-              <div className="text-xs font-semibold uppercase tracking-[0.16em] text-black/40">Stack discipline</div>
-              <p className="mt-3 text-sm leading-6 text-black/60">{report.cms.note}</p>
-              <p className="mt-3 text-xs leading-5 text-black/40">
-                A deeper WordPress/plugin/content dependency crawl is a separate step because a performance result alone is not enough evidence to decide whether a migration is safe.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-3 rounded-3xl bg-black p-6 text-white md:flex-row md:items-center md:justify-between">
-              <div>
-                <div className="text-xs font-semibold uppercase tracking-[0.16em] text-white/45">Next human decision</div>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-white/70">{report.nextDecision}</p>
-              </div>
-              <a
-                href="https://wa.me/17025273771?text=Hi%20Akash%2C%20I%20ran%20the%20MyWebLane%20audit%20and%20want%20to%20review%20the%20result"
-                target="_blank"
-                rel="noreferrer"
-                className="shrink-0 rounded-full bg-white px-5 py-3 text-sm font-semibold text-black"
-              >
-                Review with Akash
-              </a>
             </div>
           </section>
-        ) : (
-          <div className="mt-10 grid gap-3 md:grid-cols-3">
-            <MiniCard title="1. Measure" body="Start with real mobile Lighthouse evidence." />
-            <MiniCard title="2. Investigate" body="Only deepen the crawl when the evidence justifies it." />
-            <MiniCard title="3. Decide" body="Keep, clean up, or migrate with a human in the loop." />
-          </div>
-        )}
-      </section>
+
+          <section id="evidence" className="bg-[#f3f1ea] dark:bg-[#111]">
+            <div className="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:px-6 md:py-24 lg:grid-cols-2">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-black/45 dark:text-white/45">What the first pass can prove</p>
+                <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] md:text-5xl">A useful audit starts with limits.</h2>
+              </div>
+              <div className="space-y-7 text-sm leading-7 text-black/60 dark:text-white/60 md:text-base">
+                <p><strong className="text-black dark:text-white">We can measure:</strong> mobile performance, accessibility signals, best-practice signals, SEO signals, and the Lighthouse diagnostics attached to that run.</p>
+                <p><strong className="text-black dark:text-white">We do not pretend that proves:</strong> the CMS is bad, a redesign will convert better, a migration is safe, or a specific technology should replace WordPress.</p>
+                <p><strong className="text-black dark:text-white">The next step is human:</strong> inspect the stack, content, plugins, business constraints, and maintenance reality before choosing keep, clean up, or migrate.</p>
+              </div>
+            </div>
+          </section>
+        </>
+      ) : null}
     </main>
   );
 }
 
-function ScoreCard({ label, score, emphasized = false }: { label: string; score: number | null; emphasized?: boolean }) {
+function AuditResults({ report }: { report: AuditReport }) {
   return (
-    <div className={`rounded-2xl ${emphasized ? "bg-[#f4f4f0] px-5 py-4 md:text-right" : "border border-black/8 bg-[#fafaf7] p-4"}`}>
-      <div className={emphasized ? "text-3xl font-semibold" : "text-2xl font-semibold"}>{score ?? "—"}</div>
-      <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.13em] text-black/45">{label}</div>
+    <section className="mt-10 border-t border-black/15 pt-8 dark:border-white/15">
+      <div className="grid gap-8 lg:grid-cols-[1fr_280px] lg:items-start">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-black/40 dark:text-white/40">Measured audit</p>
+          <h2 className="mt-2 break-all text-2xl font-semibold tracking-tight">{report.url}</h2>
+          <p className="mt-2 text-sm text-black/50 dark:text-white/50">
+            {report.evidenceSource} · {report.strategy} · {new Date(report.measuredAt).toLocaleString()}
+          </p>
+        </div>
+        <Score label="Mobile performance" score={report.scores.performance} large />
+      </div>
+
+      <div className="mt-8 grid border-y border-black/12 sm:grid-cols-3 dark:border-white/12">
+        <Score label="Accessibility" score={report.scores.accessibility} />
+        <Score label="Best practices" score={report.scores.bestPractices} />
+        <Score label="SEO" score={report.scores.seo} />
+      </div>
+
+      <div className="mt-10 grid gap-10 md:grid-cols-2">
+        <AuditList title="Core mobile metrics" items={report.metrics} empty="No Lighthouse metric evidence returned." />
+        <AuditList title="First things to inspect" items={report.opportunities} empty="No scored Lighthouse opportunities returned." />
+      </div>
+
+      <div className="mt-10 grid gap-5 border-t border-black/12 pt-7 dark:border-white/12 md:grid-cols-[1fr_auto] md:items-end">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-black/40 dark:text-white/40">Next decision</p>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-black/65 dark:text-white/65">{report.nextDecision}</p>
+          <p className="mt-3 text-xs leading-5 text-black/40 dark:text-white/40">{report.cms.note}</p>
+        </div>
+        <a
+          href="https://wa.me/17025273771?text=Hi%20Akash%2C%20I%20ran%20the%20MyWebLane%20audit%20and%20want%20to%20review%20the%20result"
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex min-h-12 items-center justify-center bg-black px-6 text-sm font-semibold text-white dark:bg-white dark:text-black"
+        >
+          Review the evidence
+        </a>
+      </div>
+    </section>
+  );
+}
+
+function Score({ label, score, large = false }: { label: string; score: number | null; large?: boolean }) {
+  return (
+    <div className={large ? "border-l border-black/12 pl-6 dark:border-white/12" : "border-b border-black/12 py-5 last:border-b-0 sm:border-b-0 sm:border-r sm:px-5 sm:last:border-r-0 dark:border-white/12"}>
+      <div className={large ? "text-5xl font-semibold tracking-[-0.05em]" : "text-3xl font-semibold tracking-[-0.04em]"}>{score ?? "—"}</div>
+      <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.13em] text-black/45 dark:text-white/45">{label}</div>
     </div>
   );
 }
 
 function AuditList({ title, items, empty }: { title: string; items: AuditItem[]; empty: string }) {
   return (
-    <div className="rounded-3xl border border-black/10 bg-white p-6">
+    <div>
       <h3 className="text-sm font-semibold">{title}</h3>
-      <ul className="mt-4 space-y-3 text-sm leading-6 text-black/60">
+      <ul className="mt-4 divide-y divide-black/10 border-y border-black/10 text-sm leading-6 dark:divide-white/10 dark:border-white/10">
         {items.length ? (
           items.map((item) => (
-            <li key={item.id} className="rounded-2xl bg-[#f7f7f4] p-3">
-              <div className="font-medium text-black/75">{item.title}</div>
-              <div className="mt-1 flex flex-wrap gap-x-3 text-xs text-black/45">
+            <li key={item.id} className="py-4">
+              <div className="font-medium">{item.title}</div>
+              <div className="mt-1 flex flex-wrap gap-x-3 text-xs text-black/45 dark:text-white/45">
                 {item.value ? <span>{item.value}</span> : null}
                 {item.score !== null ? <span>Audit score {item.score}</span> : null}
               </div>
             </li>
           ))
         ) : (
-          <li>{empty}</li>
+          <li className="py-4 text-black/50 dark:text-white/50">{empty}</li>
         )}
       </ul>
-    </div>
-  );
-}
-
-function MiniCard({ title, body }: { title: string; body: string }) {
-  return (
-    <div className="rounded-2xl border border-black/10 bg-white p-5">
-      <div className="font-semibold">{title}</div>
-      <p className="mt-2 text-sm leading-6 text-black/50">{body}</p>
     </div>
   );
 }
