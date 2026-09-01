@@ -1,16 +1,8 @@
 "use client";
 
-import { ModeToggle } from "@repo/design-system/components/mode-toggle";
-import { Button } from "@repo/design-system/components/ui/button";
-import type { Dictionary } from "@repo/internationalization";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { LanguageSwitcher } from "./language-switcher";
-
-type HeaderProps = {
-  dictionary: Dictionary;
-};
 
 const links = [
   { label: "How it works", href: "/#how-it-works" },
@@ -18,68 +10,67 @@ const links = [
   { label: "Talk to Akash", href: "/contact" },
 ];
 
-export const Header = ({ dictionary: _dictionary }: HeaderProps) => {
+export const Header = () => {
   const [isOpen, setOpen] = useState(false);
   const closeMenu = () => setOpen(false);
 
   return (
-    <header className="sticky top-0 left-0 z-40 w-full border-b border-black/10 bg-[#f5f5f1]/95 text-[#171717] backdrop-blur dark:border-white/10 dark:bg-[#111]/95 dark:text-white">
+    <header className="sticky left-0 top-0 z-40 w-full border-b border-black/10 bg-[#f3f1ea]/95 text-[#181817] backdrop-blur">
       <div className="mx-auto flex min-h-16 max-w-6xl items-center gap-4 px-4 sm:px-6">
         <Link
           href="/"
           onClick={closeMenu}
-          className="flex min-w-0 flex-1 items-baseline gap-2"
+          className="flex min-h-11 min-w-0 flex-1 items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
           aria-label="MyWebLane home"
         >
           <span className="font-semibold tracking-[-0.02em]">MyWebLane</span>
-          <span className="hidden text-xs text-black/40 dark:text-white/40 sm:inline">by Akash Engine</span>
+          <span className="hidden text-xs text-black/40 sm:inline">by Akash Engine</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 text-sm md:flex" aria-label="Primary navigation">
+        <nav className="hidden items-center gap-1 text-sm md:flex" aria-label="Primary navigation">
           {links.map((item) => (
-            <Link key={item.href} href={item.href} className="text-black/60 transition hover:text-black dark:text-white/60 dark:hover:text-white">
+            <Link
+              key={item.href}
+              href={item.href}
+              className="inline-flex min-h-11 items-center px-4 text-black/60 transition hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 motion-reduce:transition-none"
+            >
               {item.label}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
-          <LanguageSwitcher />
-          <ModeToggle />
-        </div>
-
-        <Button
-          onClick={() => setOpen(!isOpen)}
-          variant="ghost"
-          size="icon"
-          className="h-11 w-11 shrink-0 md:hidden"
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center border border-black/15 bg-white md:hidden"
           aria-expanded={isOpen}
           aria-controls="mobile-site-navigation"
           aria-label={isOpen ? "Close navigation" : "Open navigation"}
         >
-          {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </Button>
+          {isOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+        </button>
       </div>
 
       {isOpen ? (
-        <div id="mobile-site-navigation" className="border-t border-black/10 bg-[#f5f5f1] px-4 py-4 dark:border-white/10 dark:bg-[#111] md:hidden">
-          <nav className="mx-auto flex max-w-6xl flex-col" aria-label="Mobile navigation">
+        <nav
+          id="mobile-site-navigation"
+          aria-label="Mobile navigation"
+          className="border-t border-black/10 bg-[#f3f1ea] px-4 py-4 sm:px-6 md:hidden"
+        >
+          <div className="mx-auto flex max-w-6xl flex-col divide-y divide-black/10">
             {links.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={closeMenu}
-                className="flex min-h-12 items-center border-b border-black/8 text-base last:border-b-0 dark:border-white/8"
+                className="flex min-h-12 items-center justify-between py-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
               >
                 {item.label}
+                <span aria-hidden="true" className="text-black/35">↗</span>
               </Link>
             ))}
-            <div className="mt-3 flex min-h-12 items-center justify-between">
-              <LanguageSwitcher />
-              <ModeToggle />
-            </div>
-          </nav>
-        </div>
+          </div>
+        </nav>
       ) : null}
     </header>
   );
