@@ -1,0 +1,43 @@
+{
+  "name": "@vercel-labs/deployment-verification-agent",
+  "version": "1.0.0",
+  "description": "Absolute Vercel deployment verification agent - tests production, confirms code deployed, reports actual status",
+  "main": "vercel-deployment-agent.js",
+  "types": "vercel-deployment-agent.d.ts",
+  "bin": {
+    "vercel-verify": "./vercel-deployment-agent.js"
+  },
+  "scripts": {
+    "test": "node vercel-deployment-agent.js",
+    "verify": "node vercel-deployment-agent.js"
+  },
+  "keywords": [
+    "vercel",
+    "deployment",
+    "verification",
+    "ci-cd",
+    "production",
+    "agent",
+    "skill"
+  ],
+  "author": "Vercel Labs Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vercel-labs/agent-skills"
+  },
+  "homepage": "https://github.com/vercel-labs/agent-skills",
+  "bugs": {
+    "url": "https://github.com/vercel-labs/agent-skills/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "vercel-deployment-agent.js",
+    "vercel-deployment-agent.ts",
+    "vercel-deployment-agent.d.ts",
+    "README.md",
+    "LICENSE"
+  ]
+}

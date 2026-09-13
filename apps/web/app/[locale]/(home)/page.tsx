@@ -1,34 +1,24 @@
-import { showBetaFeature } from "@repo/feature-flags";
-import { getDictionary } from "@repo/internationalization";
-import { createMetadata } from "@repo/seo/metadata";
 import type { Metadata } from "next";
-import { MyWebLaneLanding } from "./components/my-web-lane";
+import { MyWebLaneV2 } from "./components/my-web-lane-v2";
 
-type HomeProps = {
-  params: Promise<{
-    locale: string;
-  }>;
+export const metadata: Metadata = {
+  title: "MyWebLane — Diagnose Before You Rebuild | Akash Engine",
+  description:
+    "A mobile-first website diagnostic from Akash Engine. Measure real Lighthouse evidence before deciding to keep, clean up, or migrate a site.",
+  openGraph: {
+    title: "MyWebLane — Diagnose Before You Rebuild | Akash Engine",
+    description:
+      "Measure the current site first. Keep what works and change only what the evidence can justify.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MyWebLane — Diagnose Before You Rebuild | Akash Engine",
+    description:
+      "Measure the current site first. Keep what works and change only what the evidence can justify.",
+  },
 };
 
-export const generateMetadata = async ({ params }: HomeProps): Promise<Metadata> => {
-  const { locale } = await params;
-  const dictionary = await getDictionary(locale);
-  return createMetadata({
-    title: "My Web Lane — Stop Losing to Slower Competitors",
-    description: "We migrate slow WordPress sites to blazing-fast Astro + Cloudflare Pages — in 25 minutes.",
-  });
-};
-
-const Home = async ({ params }: HomeProps) => {
-  const { locale } = await params;
-  const dictionary = await getDictionary(locale);
-  const betaFeature = await showBetaFeature();
-
-  return (
-    <>
-      <MyWebLaneLanding />
-    </>
-  );
-};
-
-export default Home;
+export default function Home() {
+  return <MyWebLaneV2 />;
+}
