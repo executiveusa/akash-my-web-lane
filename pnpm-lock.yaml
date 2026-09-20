@@ -495,8 +495,8 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       sharp:
-        specifier: ^0.34.4
-        version: 0.34.4
+        specifier: ^0.35.4
+        version: 0.35.4(@types/node@24.7.0)
       shiki:
         specifier: ^3.13.0
         version: 3.13.0
@@ -11453,8 +11453,8 @@ packages:
   rrweb-cssom@0.8.0:
     resolution: {integrity: sha512-guoltQEx+9aMf2gDZ0s62EcV8lsXR+0w8915TC3ITdn2YueuNjdAYh/levpU9nFaoChh9RUS5ZdQMrKfVEN9tw==}
 
-  rrweb-snapshot@2.1.4:
-    resolution: {integrity: sha512-Yo5H9PrvsC2roBaDWpb6d9aOridpUndS0eEhLQC7sbrL2Ie/l98d9bhAm7e+ZOHgdIweIqndS0R1Omz+i68Osw==}
+  rrweb-snapshot@2.1.6:
+    resolution: {integrity: sha512-X03+x3AdWTbpD4Swb54CCJoEauYTv/O2ah0d3ZVv5rgr6bv0Ty5mxNjEyEEfNC1dQ8VdyjKKJgDG3A00FV0lNg==}
 
   run-async@2.4.1:
     resolution: {integrity: sha512-tvVnVv01b8c1RrA6Ep7JkStj85Guv/YrMcwqYQnwjsAS2cTmmPGBBjAjpCW7RrSodNSoE2/qg9O4bceNvUuDgQ==}
@@ -11560,11 +11560,6 @@ packages:
 
   semver@7.6.2:
     resolution: {integrity: sha512-FNAIBWCx9qcRhoHcgcJ0gvU7SN1lYU2ZXuSfl04bSC5OpvDHFyJCjdNHomPXxjQlCBU67YW64PzY7/VIEH7F2w==}
-    engines: {node: '>=10'}
-    hasBin: true
-
-  semver@7.7.1:
-    resolution: {integrity: sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -13102,7 +13097,7 @@ snapshots:
       parse-github-url: 1.0.2
       pretty-ms: 7.0.1
       requireg: 0.2.2
-      semver: 7.7.1
+      semver: 7.8.5
       signale: 1.4.0
       tapable: 2.2.1
       terminal-link: 2.1.1
@@ -14851,8 +14846,7 @@ snapshots:
 
   '@img/colour@1.0.0': {}
 
-  '@img/colour@1.1.0':
-    optional: true
+  '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.33.5':
     optionalDependencies:
@@ -17664,7 +17658,7 @@ snapshots:
 
   '@rrweb/types@2.0.0-alpha.17':
     dependencies:
-      rrweb-snapshot: 2.1.4
+      rrweb-snapshot: 2.1.6
     optional: true
 
   '@scena/dragscroll@1.4.0':
@@ -18609,7 +18603,7 @@ snapshots:
 
   '@tailwindcss/oxide@4.1.14':
     dependencies:
-      detect-libc: 2.1.1
+      detect-libc: 2.1.2
       tar: 7.5.1
     optionalDependencies:
       '@tailwindcss/oxide-android-arm64': 4.1.14
@@ -21391,7 +21385,7 @@ snapshots:
       minimatch: 3.1.2
       node-abort-controller: 3.1.1
       schema-utils: 3.3.0
-      semver: 7.7.2
+      semver: 7.8.5
       tapable: 2.2.1
       typescript: 5.8.3
       webpack: 5.98.0(esbuild@0.25.5)
@@ -24854,7 +24848,7 @@ snapshots:
 
   rrweb-cssom@0.8.0: {}
 
-  rrweb-snapshot@2.1.4:
+  rrweb-snapshot@2.1.6:
     dependencies:
       postcss: 8.5.28
     optional: true
@@ -24965,8 +24959,6 @@ snapshots:
   semver@6.3.1: {}
 
   semver@7.6.2: {}
-
-  semver@7.7.1: {}
 
   semver@7.7.2: {}
 
@@ -25127,7 +25119,6 @@ snapshots:
       '@img/sharp-win32-ia32': 0.35.4
       '@img/sharp-win32-x64': 0.35.4
       '@types/node': 24.7.0
-    optional: true
 
   shebang-command@2.0.0:
     dependencies:
