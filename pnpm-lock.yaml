@@ -400,7 +400,7 @@ importers:
         version: 13.3.0
       postcss:
         specifier: ^8
-        version: 8.5.23
+        version: 8.5.24
       storybook:
         specifier: ^8.6.14
         version: 8.6.14(bufferutil@4.0.9)(prettier@3.5.3)
@@ -860,7 +860,7 @@ importers:
         specifier: ^19.2.1
         version: 19.2.1
       postcss:
-        specifier: ^8.5.23
+        specifier: ^8.5.24
         version: 8.5.28
       tailwindcss:
         specifier: ^4.1.14
@@ -10912,8 +10912,8 @@ packages:
     resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
     engines: {node: ^10 || ^12 || >=14}
 
-  postcss@8.5.23:
-    resolution: {integrity: sha512-g50586zr4bZmwFiTlflMu8E0bDTb5I5gertgwAKmsdUlTQIhZtunzUlD1WSzwcVWPoAVpsrA6vlfCD7oXvRwgg==}
+  postcss@8.5.24:
+    resolution: {integrity: sha512-8RyVklq0owXUTa4xlpzu4l9AaVKIdQvAcOHZWaMh98HgySsUtxRVf/chRe3dsSLqb6i40BzGRzEUddRaI+9TSw==}
     engines: {node: ^10 || ^12 || >=14}
 
   postcss@8.5.28:
@@ -18557,8 +18557,8 @@ snapshots:
       next: 15.5.25(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(@types/node@24.7.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(sass@1.77.2)
       node-polyfill-webpack-plugin: 2.0.1(webpack@5.98.0(esbuild@0.25.5))
       pnp-webpack-plugin: 1.7.0(typescript@5.8.3)
-      postcss: 8.5.23
-      postcss-loader: 8.1.1(postcss@8.5.23)(typescript@5.8.3)(webpack@5.98.0(esbuild@0.25.5))
+      postcss: 8.5.24
+      postcss-loader: 8.1.1(postcss@8.5.24)(typescript@5.8.3)(webpack@5.98.0(esbuild@0.25.5))
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
       react-refresh: 0.14.2
@@ -24049,11 +24049,11 @@ snapshots:
       postcss: 8.5.28
       yaml: 2.7.0
 
-  postcss-loader@8.1.1(postcss@8.5.23)(typescript@5.8.3)(webpack@5.98.0(esbuild@0.25.5)):
+  postcss-loader@8.1.1(postcss@8.5.24)(typescript@5.8.3)(webpack@5.98.0(esbuild@0.25.5)):
     dependencies:
       cosmiconfig: 9.0.0(typescript@5.8.3)
       jiti: 1.21.7
-      postcss: 8.5.23
+      postcss: 8.5.24
       semver: 7.7.2
     optionalDependencies:
       webpack: 5.98.0(esbuild@0.25.5)
@@ -24109,7 +24109,7 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  postcss@8.5.23:
+  postcss@8.5.24:
     dependencies:
       nanoid: 3.3.19
       picocolors: 1.1.1
