@@ -9,7 +9,7 @@
   "dependencies": {
     "@repo/database": "workspace:*",
     "@repo/observability": "workspace:*",
-    "zod": "^4.1.12"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
