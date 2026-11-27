@@ -277,3 +277,24 @@ packages/database/generated
 .contentlayer
 .content-collections
 .source
+# tsc output accidentally emitted beside sources in apps/web (nextjs tsconfig is noEmit; typecheck only)
+apps/web/env.js
+apps/web/env.d.ts
+apps/web/env.d.ts.map
+apps/web/instrumentation.js
+apps/web/instrumentation.d.ts
+apps/web/instrumentation.d.ts.map
+apps/web/instrumentation-client.js
+apps/web/instrumentation-client.d.ts
+apps/web/instrumentation-client.d.ts.map
+apps/web/middleware.js
+apps/web/middleware.d.ts
+apps/web/middleware.d.ts.map
+apps/web/sentry.edge.config.js
+apps/web/sentry.edge.config.d.ts
+apps/web/sentry.edge.config.d.ts.map
+apps/web/sentry.server.config.js
+apps/web/sentry.server.config.d.ts
+apps/web/sentry.server.config.d.ts.map
+apps/web/next.config.d.ts
+apps/web/next.config.d.ts.map
